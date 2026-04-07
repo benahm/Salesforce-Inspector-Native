@@ -1,0 +1,76 @@
+flowchart TD
+    U[User]
+    A[Salesforce Inspector Native<br/>Lightning App Shell]
+
+    subgraph LWC[LWC Module Layer]
+        DE[Data Explorer]
+        IW[Import Wizard]
+        RI[Record Inspector]
+        ME[Metadata Explorer]
+        SH[Shortcuts]
+        UI[User Inspector]
+        RE[REST Explorer]
+        SE[Streaming Explorer]
+        FC[Field Creator]
+        ST[API Statistics]
+    end
+
+    subgraph Shared[Shared LWC Components]
+        DT[Dynamic Datatable]
+        KV[Key Value Grid]
+        JV[JSON Viewer]
+        HP[History and Favorites]
+        PG[Permission Gate]
+        EP[Error and Empty States]
+    end
+
+    subgraph Apex[Apex Service Layer]
+        QS[SIN_QueryService]
+        IS[SIN_ImportService]
+        RS[SIN_RecordService]
+        MS[SIN_MetadataService]
+        SS[SIN_ShortcutService]
+        US[SIN_UserInspectorService]
+        RES[SIN_RestExplorerService]
+        SES[SIN_StreamingService]
+        FCS[SIN_FieldCreatorService]
+        STS[SIN_StatsService]
+        ACS[SIN_AccessService]
+        PRS[SIN_PreferenceService]
+    end
+
+    subgraph Platform[Salesforce Platform Services]
+        DB[(Data and Metadata)]
+        CMDT[Custom Metadata Types]
+        CO[(Custom Objects)]
+        CACHE[(Platform Cache)]
+        API[Salesforce APIs]
+        EVT[Streaming and Events]
+    end
+
+    U --> A
+    A --> LWC
+    LWC --> Shared
+    LWC --> Apex
+    Apex --> Platform
+
+    RE --> RES
+    DE --> QS
+    IW --> IS
+    RI --> RS
+    ME --> MS
+    SH --> SS
+    UI --> US
+    SE --> SES
+    FC --> FCS
+    ST --> STS
+
+    ACS --> CMDT
+    PRS --> CO
+    QS --> DB
+    RS --> DB
+    MS --> DB
+    RES --> API
+    SES --> EVT
+    STS --> CO
+    STS --> CACHE

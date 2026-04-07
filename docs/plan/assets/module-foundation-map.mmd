@@ -1,0 +1,44 @@
+flowchart LR
+    subgraph P0[Phase 1 Core Inspector MVP]
+        DE[Data Explorer]
+        RI[Record Inspector]
+        ME[Metadata Explorer]
+        IM[Import and Mass Actions]
+    end
+
+    subgraph P1[Phase 2 Productivity]
+        SH[Shortcuts]
+        UI[User Inspector]
+        RE[REST Explorer]
+        SE[Streaming Explorer]
+    end
+
+    subgraph P2[Phase 3 Power Admin]
+        FC[Field Creator]
+        ST[API Statistics]
+    end
+
+    subgraph Foundations[Foundation Layer]
+        NAV[App Shell and Navigation]
+        ACC[Permission Model]
+        HIST[History and Favorites]
+        TABLE[Dynamic Datatable]
+        SAFE[Guardrails and Audit]
+        CFG[Configuration]
+    end
+
+    Foundations --> P0
+    Foundations --> P1
+    Foundations --> P2
+
+    DE --> TABLE
+    RI --> TABLE
+    ME --> TABLE
+    IM --> SAFE
+    RE --> SAFE
+    FC --> SAFE
+    SH --> CFG
+    UI --> ACC
+    SE --> ACC
+    ST --> HIST
+    NAV --> HIST
