@@ -6,6 +6,7 @@ import countChildren from "@salesforce/apex/SFI_RecordService.countChildren";
 import {
   containsIgnoreCase,
   copyToClipboard,
+  dataExportUrl,
   isSalesforceId,
   objectSetupUrl,
   recordUrl,
@@ -148,6 +149,9 @@ export default class SfiShowAllData extends LightningElement {
           key,
           count: this.counts[key],
           hasCount: this.counts[key] !== undefined,
+          exportUrl: dataExportUrl(
+            `SELECT Id FROM ${rel.childObject} WHERE ${rel.field} = '${this.data.recordId}'`
+          ),
           relatedListUrl: `/lightning/r/${this.data.objectApiName}/${this.data.recordId}/related/${rel.relationshipName}/view`
         };
       });

@@ -14,6 +14,12 @@ export function showAllDataUrl(recordId) {
   return `/lightning/cmp/c__sfiShowAllData?c__recordId=${encodeURIComponent(recordId)}`;
 }
 
+export function dataExportUrl(query) {
+  return query
+    ? `/lightning/cmp/c__sfiDataExport?c__query=${encodeURIComponent(query)}`
+    : "/lightning/cmp/c__sfiDataExport";
+}
+
 export function recordUrl(recordId) {
   return `/lightning/r/${encodeURIComponent(recordId)}/view`;
 }

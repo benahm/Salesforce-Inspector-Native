@@ -23,6 +23,19 @@ public with sharing class SFI_DescribeService {
     }
   }
 
+  public class FieldInfo {
+    @AuraEnabled
+    public String name;
+    @AuraEnabled
+    public String label;
+    @AuraEnabled
+    public String type;
+    @AuraEnabled
+    public String relationshipName;
+    @AuraEnabled
+    public List<String> referenceTo = new List<String>();
+  }
+
   /**
    * Returns the describe of an sObject, or throws a readable error when the name is unknown.
    */
@@ -40,6 +53,61 @@ public with sharing class SFI_DescribeService {
   public static ObjectInfo getObjectInfo(String objectApiName) {
     try {
       return new ObjectInfo(describe(objectApiName));
+    } catch (Exception e) {
+      throw SFI_Exception.toAura(e);
+    }
+  }
+
+  /**
+   * Queryable objects the user can access, used by SOQL autocomplete.
+   */
+  @AuraEnabled(cacheable=true)
+  public static List<ObjectInfo> listObjects() {
+    try {
+      List<ObjectInfo> result = new List<ObjectInfo>();
+      for (
+        Schema.SObjectType sObjectType : Schema.getGlobalDescribe().values()
+      ) {
+        Schema.DescribeSObjectResult d = sObjectType.getDescribe(
+          SObjectDescribeOptions.DEFERRED
+        );
+        if (d.isAccessible() && d.isQueryable()) {
+          result.add(new ObjectInfo(d));
+        }
+      }
+      return result;
+    } catch (Exception e) {
+      throw SFI_Exception.toAura(e);
+    }
+  }
+
+  /**
+   * Accessible fields of an object, used by SOQL autocomplete.
+   */
+  @AuraEnabled(cacheable=true)
+  public static List<FieldInfo> getFields(String objectApiName) {
+    try {
+      List<FieldInfo> result = new List<FieldInfo>();
+      for (
+        Schema.SObjectField field : describe(objectApiName)
+          .fields.getMap()
+          .values()
+      ) {
+        Schema.DescribeFieldResult d = field.getDescribe();
+        if (!d.isAccessible()) {
+          continue;
+        }
+        FieldInfo info = new FieldInfo();
+        info.name = d.getName();
+        info.label = d.getLabel();
+        info.type = d.getType().name();
+        info.relationshipName = d.getRelationshipName();
+        for (Schema.SObjectType referenceType : d.getReferenceTo()) {
+          info.referenceTo.add(referenceType.getDescribe().getName());
+        }
+        result.add(info);
+      }
+      return result;
     } catch (Exception e) {
       throw SFI_Exception.toAura(e);
     }

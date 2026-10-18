@@ -7,6 +7,7 @@ import search from "@salesforce/apex/SFI_SearchService.search";
 import {
   containsIgnoreCase,
   copyToClipboard,
+  dataExportUrl,
   debounce,
   highlight,
   isSalesforceId,
@@ -215,6 +216,14 @@ export default class SfiLauncher extends LightningElement {
 
   get showAllDataUrl() {
     return showAllDataUrl(this.record?.recordId);
+  }
+
+  get dataExportUrl() {
+    return dataExportUrl(
+      this.objectApiName
+        ? `SELECT Id FROM ${this.objectApiName} LIMIT 100`
+        : null
+    );
   }
 
   get recordViewUrl() {

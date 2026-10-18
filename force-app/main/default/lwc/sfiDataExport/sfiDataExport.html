@@ -1,0 +1,221 @@
+<template>
+  <div class="slds-card sfi-page">
+    <!-- Editor -->
+    <div class="slds-p-around_small">
+      <div
+        class="slds-grid slds-grid_vertical-align-center slds-m-bottom_x-small"
+      >
+        <h1 class="slds-text-heading_small slds-col">Data Export</h1>
+        <span class="slds-text-body_small slds-text-color_weak">
+          Ctrl+Enter to run · Tab to accept the first suggestion
+        </span>
+      </div>
+      <textarea
+        class="slds-textarea sfi-editor"
+        rows="6"
+        spellcheck="false"
+        oninput={handleQueryInput}
+        onkeydown={handleKeyDown}
+        onkeyup={handleCursorMove}
+        onclick={handleCursorMove}
+        aria-label="SOQL query"
+      ></textarea>
+
+      <template lwc:if={hasSuggestions}>
+        <div class="sfi-suggestions">
+          <template for:each={suggestions} for:item="suggestion">
+            <button
+              key={suggestion.value}
+              class="slds-button slds-button_neutral sfi-suggestion"
+              title={suggestion.detail}
+              data-value={suggestion.value}
+              onclick={handleSuggestionClick}
+            >
+              {suggestion.label}
+            </button>
+          </template>
+        </div>
+      </template>
+
+      <div
+        class="slds-grid slds-wrap slds-grid_vertical-align-end slds-m-top_x-small sfi-toolbar"
+      >
+        <lightning-button
+          variant="brand"
+          label="Run"
+          icon-name="utility:play"
+          onclick={handleRun}
+          disabled={isRunning}
+        ></lightning-button>
+        <lightning-combobox
+          label="Max rows"
+          variant="label-hidden"
+          value={maxRows}
+          options={maxRowOptions}
+          onchange={handleMaxRows}
+          class="sfi-max-rows"
+        ></lightning-combobox>
+        <lightning-input
+          type="checkbox"
+          label="Include deleted (ALL ROWS)"
+          checked={includeDeleted}
+          onchange={handleIncludeDeleted}
+        ></lightning-input>
+        <div class="slds-col_bump-left"></div>
+        <template lwc:if={hasHistory}>
+          <lightning-combobox
+            label="History"
+            variant="label-hidden"
+            placeholder="History"
+            options={historyOptions}
+            onchange={handleHistorySelect}
+            class="sfi-history"
+          ></lightning-combobox>
+          <lightning-button-icon
+            icon-name="utility:delete"
+            alternative-text="Clear history"
+            title="Clear history"
+            onclick={handleClearHistory}
+          ></lightning-button-icon>
+        </template>
+        <template lwc:if={hasSaved}>
+          <lightning-combobox
+            label="Saved"
+            variant="label-hidden"
+            placeholder="Saved queries"
+            value={selectedSaved}
+            options={savedOptions}
+            onchange={handleSavedSelect}
+            class="sfi-saved"
+          ></lightning-combobox>
+          <lightning-button-icon
+            icon-name="utility:close"
+            alternative-text="Delete saved query"
+            title="Delete saved query"
+            disabled={deleteSavedDisabled}
+            onclick={handleDeleteSaved}
+          ></lightning-button-icon>
+        </template>
+        <lightning-button
+          label="Save query"
+          icon-name="utility:save"
+          onclick={handleSave}
+        ></lightning-button>
+      </div>
+    </div>
+
+    <template lwc:if={error}>
+      <div
+        class="slds-notify slds-notify_alert slds-alert_error slds-m-horizontal_small sfi-error"
+        role="alert"
+      >
+        {error}
+      </div>
+    </template>
+
+    <template lwc:if={isRunning}>
+      <div class="sfi-spinner-holder">
+        <lightning-spinner
+          alternative-text="Running query"
+          size="medium"
+        ></lightning-spinner>
+      </div>
+    </template>
+
+    <!-- Results -->
+    <template lwc:if={hasResult}>
+      <div
+        class="slds-grid slds-wrap slds-grid_vertical-align-center slds-p-horizontal_small slds-p-bottom_x-small sfi-toolbar"
+      >
+        <span class="slds-text-body_small slds-text-color_weak"
+          >{resultSummary}</span
+        >
+        <div class="slds-col_bump-left"></div>
+        <lightning-input
+          type="search"
+          variant="label-hidden"
+          placeholder="Filter results"
+          value={resultFilter}
+          onchange={handleResultFilter}
+          disabled={exportDisabled}
+          class="sfi-result-filter"
+        ></lightning-input>
+        <lightning-button-group>
+          <lightning-button
+            label="Copy (Excel)"
+            onclick={handleCopyExcel}
+            disabled={exportDisabled}
+          ></lightning-button>
+          <lightning-button
+            label="Copy (CSV)"
+            onclick={handleCopyCsv}
+            disabled={exportDisabled}
+          ></lightning-button>
+          <lightning-button
+            label="Copy (JSON)"
+            onclick={handleCopyJson}
+            disabled={exportDisabled}
+          ></lightning-button>
+          <lightning-button
+            label="Download CSV"
+            icon-name="utility:download"
+            onclick={handleDownloadCsv}
+            disabled={exportDisabled}
+          ></lightning-button>
+        </lightning-button-group>
+      </div>
+
+      <template lwc:if={hasRows}>
+        <div class="sfi-results">
+          <table
+            class="slds-table slds-table_bordered slds-table_striped slds-table_col-bordered sfi-table"
+          >
+            <thead>
+              <tr>
+                <template for:each={columnHeaders} for:item="column">
+                  <th
+                    key={column.name}
+                    scope="col"
+                    class="sfi-th"
+                    data-column={column.name}
+                    onclick={handleSort}
+                  >
+                    <span class="sfi-mono">{column.name}</span>
+                    <template lwc:if={column.sortIcon}>
+                      <lightning-icon
+                        icon-name={column.sortIcon}
+                        size="xx-small"
+                        class="slds-m-left_xx-small"
+                      ></lightning-icon>
+                    </template>
+                  </th>
+                </template>
+              </tr>
+            </thead>
+            <tbody>
+              <template for:each={displayRows} for:item="row">
+                <tr key={row.key}>
+                  <template for:each={row.cells} for:item="cell">
+                    <td
+                      key={cell.key}
+                      data-value={cell.value}
+                      ondblclick={handleCopyCell}
+                      title="Double-click to copy"
+                    >
+                      <template lwc:if={cell.isId}>
+                        <a href={cell.url} target="_blank" class="sfi-mono"
+                          >{cell.value}</a
+                        >
+                      </template>
+                      <template lwc:else>{cell.value}</template>
+                    </td>
+                  </template>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </template>
+    </template>
+  </div>
+</template>
