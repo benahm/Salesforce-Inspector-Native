@@ -20,6 +20,12 @@ export function dataExportUrl(query) {
     : "/lightning/cmp/c__sfiDataExport";
 }
 
+export function dataImportUrl(objectApiName) {
+  return objectApiName
+    ? `/lightning/cmp/c__sfiDataImport?c__object=${encodeURIComponent(objectApiName)}`
+    : "/lightning/cmp/c__sfiDataImport";
+}
+
 export function recordUrl(recordId) {
   return `/lightning/r/${encodeURIComponent(recordId)}/view`;
 }

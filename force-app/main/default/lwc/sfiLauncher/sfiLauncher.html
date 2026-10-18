@@ -161,6 +161,12 @@
             class="slds-button slds-button_brand"
             >Data Export</a
           >
+          <a
+            href={dataImportUrl}
+            target="_blank"
+            class="slds-button slds-button_neutral"
+            >Data Import</a
+          >
         </template>
 
         <template lwc:if={showObjectSetup}>
@@ -202,10 +208,12 @@
             ></lightning-button>
           </div>
           <p class="slds-m-top_small slds-text-color_weak">
-            Or run a SOQL query:
+            Or work with data:
             <a href={dataExportUrl} target="_blank" class="slds-m-left_xx-small"
               >Data Export</a
             >
+            ·
+            <a href={dataImportUrl} target="_blank">Data Import</a>
           </p>
         </template>
       </template>

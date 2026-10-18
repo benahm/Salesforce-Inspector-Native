@@ -8,6 +8,7 @@ import getFields from "@salesforce/apex/SFI_DescribeService.getFields";
 import {
   containsIgnoreCase,
   copyToClipboard,
+  dataImportUrl,
   isSalesforceId,
   reduceErrors,
   showAllDataUrl
@@ -382,6 +383,10 @@ export default class SfiDataExport extends LightningElement {
     }
   }
 
+  get dataImportUrl() {
+    return dataImportUrl(getFromObject(this.query));
+  }
+
   // ---- Results ----
 
   get hasResult() {
@@ -524,7 +529,7 @@ export default class SfiDataExport extends LightningElement {
   }
 
   handleDownloadCsv() {
-    const csv = "﻿" + toCsv(this.result.columns, this.filteredRows);
+    const csv = "\uFEFF" + toCsv(this.result.columns, this.filteredRows);
     const timestamp = new Date()
       .toISOString()
       .slice(0, 19)

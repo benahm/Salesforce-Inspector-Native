@@ -1,0 +1,83 @@
+.sfi-page {
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.sfi-data {
+  font-family: "Consolas", "Monaco", monospace;
+  font-size: 0.75rem;
+  resize: vertical;
+}
+
+.sfi-row {
+  gap: 0.5rem;
+}
+
+.sfi-object {
+  position: relative;
+}
+
+.sfi-object-matches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.25rem;
+}
+
+.sfi-chip {
+  font-family: "Consolas", "Monaco", monospace;
+  font-size: 0.75rem;
+  line-height: 1.5rem;
+  padding: 0 0.5rem;
+  margin: 0;
+}
+
+.sfi-batch {
+  width: 9rem;
+}
+
+.sfi-mapping {
+  max-height: 22rem;
+  overflow-y: auto;
+}
+
+.sfi-table td,
+.sfi-table th {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+.sfi-sample {
+  max-width: 18rem;
+}
+
+.sfi-ignored td:first-child,
+.sfi-ignored td:nth-child(2) {
+  color: #939393;
+}
+
+.sfi-warning {
+  color: #8c4b02;
+}
+
+.sfi-progress {
+  min-width: 10rem;
+}
+
+.sfi-results {
+  max-height: calc(100vh - 14rem);
+  overflow: auto;
+}
+
+.sfi-error-cell {
+  white-space: normal;
+  min-width: 16rem;
+}
+
+.sfi-mono {
+  font-family: "Consolas", "Monaco", monospace;
+}
+
+.sfi-pre {
+  white-space: pre-wrap;
+}

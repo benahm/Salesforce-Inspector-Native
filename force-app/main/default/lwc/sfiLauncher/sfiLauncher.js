@@ -8,6 +8,7 @@ import {
   containsIgnoreCase,
   copyToClipboard,
   dataExportUrl,
+  dataImportUrl,
   debounce,
   highlight,
   isSalesforceId,
@@ -224,6 +225,10 @@ export default class SfiLauncher extends LightningElement {
         ? `SELECT Id FROM ${this.objectApiName} LIMIT 100`
         : null
     );
+  }
+
+  get dataImportUrl() {
+    return dataImportUrl(this.objectApiName);
   }
 
   get recordViewUrl() {

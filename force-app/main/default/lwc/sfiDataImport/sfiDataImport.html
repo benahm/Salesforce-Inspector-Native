@@ -1,0 +1,288 @@
+<template>
+  <div class="slds-card sfi-page">
+    <div
+      class="slds-grid slds-grid_vertical-align-center slds-p-around_small sfi-header"
+    >
+      <h1 class="slds-text-heading_small slds-col">Data Import</h1>
+      <a href={dataExportUrl} target="_blank">Data Export</a>
+    </div>
+
+    <template lwc:if={error}>
+      <div
+        class="slds-notify slds-notify_alert slds-alert_error slds-m-horizontal_small sfi-pre"
+        role="alert"
+      >
+        {error}
+      </div>
+    </template>
+
+    <div
+      class="slds-grid slds-wrap slds-gutters_x-small slds-p-horizontal_small"
+    >
+      <!-- 1. Data -->
+      <div class="slds-col slds-size_1-of-1 slds-large-size_7-of-12">
+        <p class="slds-text-title_caps slds-m-bottom_xx-small">1. Data</p>
+        <template lwc:if={showPasteArea}>
+          <textarea
+            class="slds-textarea sfi-data"
+            rows="9"
+            spellcheck="false"
+            placeholder="LastName,Email&#10;Doe,john.doe@example.com"
+            oninput={handleDataInput}
+            aria-label="CSV data"
+          ></textarea>
+        </template>
+        <div
+          class="slds-grid slds-grid_vertical-align-center slds-m-top_xx-small sfi-row"
+        >
+          <lightning-input
+            type="file"
+            label="CSV file"
+            variant="label-hidden"
+            accept=".csv,.txt,.tsv"
+            onchange={handleFile}
+          ></lightning-input>
+          <template lwc:if={hasData}>
+            <lightning-button
+              variant="base"
+              label="Clear"
+              onclick={handleClearData}
+            ></lightning-button>
+          </template>
+          <span class="slds-text-body_small slds-text-color_weak"
+            >{dataSummary}</span
+          >
+        </div>
+      </div>
+
+      <!-- 2. Action -->
+      <div class="slds-col slds-size_1-of-1 slds-large-size_5-of-12">
+        <p class="slds-text-title_caps slds-m-bottom_xx-small">2. Action</p>
+        <lightning-radio-group
+          type="button"
+          label="Operation"
+          variant="label-hidden"
+          options={operationOptions}
+          value={operation}
+          onchange={handleOperation}
+        ></lightning-radio-group>
+
+        <div class="slds-m-top_x-small sfi-object">
+          <lightning-input
+            type="search"
+            label="Object"
+            placeholder="Search an object (API name or label)"
+            value={objectSearch}
+            onchange={handleObjectSearch}
+          ></lightning-input>
+          <template lwc:if={hasObjectMatches}>
+            <div class="sfi-object-matches">
+              <template for:each={objectMatches} for:item="match">
+                <button
+                  key={match.name}
+                  class="slds-button slds-button_neutral sfi-chip"
+                  title={match.label}
+                  data-name={match.name}
+                  onclick={handleObjectPick}
+                >
+                  {match.name}
+                </button>
+              </template>
+            </div>
+          </template>
+        </div>
+
+        <template lwc:if={isUpsert}>
+          <lightning-combobox
+            class="slds-m-top_x-small"
+            label="Match records on (external Id)"
+            value={externalIdField}
+            options={externalIdOptions}
+            onchange={handleExternalId}
+          ></lightning-combobox>
+        </template>
+
+        <div
+          class="slds-grid slds-wrap slds-grid_vertical-align-end slds-m-top_x-small sfi-row"
+        >
+          <lightning-combobox
+            label="Batch size"
+            variant="label-hidden"
+            value={batchSize}
+            options={batchSizeOptions}
+            onchange={handleBatchSize}
+            class="sfi-batch"
+          ></lightning-combobox>
+          <template lwc:if={showClearEmpty}>
+            <lightning-input
+              type="checkbox"
+              label="Empty cells clear the field"
+              field-level-help="When unchecked, empty cells are ignored and existing values are kept."
+              checked={clearEmptyValues}
+              onchange={handleClearEmpty}
+            ></lightning-input>
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Mapping -->
+    <template lwc:if={showMapping}>
+      <div class="slds-p-horizontal_small slds-m-top_small">
+        <p class="slds-text-title_caps slds-m-bottom_xx-small">3. Mapping</p>
+        <div class="sfi-mapping">
+          <table
+            class="slds-table slds-table_bordered slds-table_cell-buffer sfi-table"
+          >
+            <thead>
+              <tr>
+                <th scope="col">CSV column</th>
+                <th scope="col">First row</th>
+                <th scope="col">Salesforce field</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template for:each={mappingRows} for:item="row">
+                <tr key={row.index} class={row.rowClass}>
+                  <td class="sfi-mono">{row.column}</td>
+                  <td class="slds-truncate sfi-sample" title={row.sample}>
+                    {row.sample}
+                  </td>
+                  <td>
+                    <lightning-combobox
+                      label="Field"
+                      variant="label-hidden"
+                      value={row.field}
+                      options={row.options}
+                      data-index={row.index}
+                      onchange={handleMappingChange}
+                    ></lightning-combobox>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </template>
+
+    <!-- Checks and actions -->
+    <template lwc:if={hasData}>
+      <div class="slds-p-horizontal_small slds-m-top_small">
+        <template for:each={validationErrors} for:item="message">
+          <p key={message} class="slds-text-color_error">✖ {message}</p>
+        </template>
+        <template for:each={validationWarnings} for:item="message">
+          <p key={message} class="sfi-warning">⚠ {message}</p>
+        </template>
+        <div
+          class="slds-grid slds-grid_vertical-align-center slds-m-top_x-small sfi-row"
+        >
+          <lightning-button
+            label="Validate only (dry run)"
+            icon-name="utility:check"
+            title="Runs the import and rolls it back: real errors, nothing saved"
+            onclick={handleValidate}
+            disabled={runDisabled}
+          ></lightning-button>
+          <lightning-button
+            variant={importVariant}
+            label={importLabel}
+            icon-name="utility:upload"
+            onclick={handleImport}
+            disabled={runDisabled}
+          ></lightning-button>
+          <template lwc:if={isRunning}>
+            <lightning-button
+              label="Stop"
+              icon-name="utility:stop"
+              onclick={handleStop}
+            ></lightning-button>
+            <div class="slds-col sfi-progress">
+              <lightning-progress-bar
+                value={progressValue}
+                size="large"
+              ></lightning-progress-bar>
+            </div>
+            <span class="slds-text-body_small">{progressLabel}</span>
+          </template>
+        </div>
+      </div>
+    </template>
+
+    <!-- 4. Results -->
+    <template lwc:if={hasResults}>
+      <div class="slds-p-around_small">
+        <div
+          class="slds-grid slds-wrap slds-grid_vertical-align-center slds-m-bottom_x-small sfi-row"
+        >
+          <p class="slds-text-title_caps">4. {resultsTitle}</p>
+          <span class="slds-text-body_small">{resultSummary}</span>
+          <div class="slds-col_bump-left"></div>
+          <lightning-radio-group
+            type="button"
+            label="Show"
+            variant="label-hidden"
+            options={resultFilterOptions}
+            value={resultFilter}
+            onchange={handleResultFilter}
+          ></lightning-radio-group>
+          <lightning-button
+            label="Download results"
+            icon-name="utility:download"
+            onclick={handleDownloadResults}
+            disabled={isRunning}
+          ></lightning-button>
+          <lightning-button
+            label="Download errors"
+            icon-name="utility:download"
+            onclick={handleDownloadErrors}
+            disabled={downloadErrorsDisabled}
+          ></lightning-button>
+        </div>
+        <template lwc:if={resultsTruncated}>
+          <p
+            class="slds-text-body_small slds-text-color_weak slds-m-bottom_xx-small"
+          >
+            First {maxDisplayRows} rows displayed. Downloads include every row.
+          </p>
+        </template>
+        <div class="sfi-results">
+          <table
+            class="slds-table slds-table_bordered slds-table_striped sfi-table"
+          >
+            <thead>
+              <tr>
+                <th scope="col">Line</th>
+                <th scope="col">Status</th>
+                <th scope="col">Id</th>
+                <th scope="col">Error</th>
+                <template for:each={previewColumns} for:item="column">
+                  <th key={column} scope="col" class="sfi-mono">{column}</th>
+                </template>
+              </tr>
+            </thead>
+            <tbody>
+              <template for:each={resultRows} for:item="row">
+                <tr key={row.key}>
+                  <td>{row.line}</td>
+                  <td class={row.statusClass}>{row.status}</td>
+                  <td class="sfi-mono">
+                    <template lwc:if={row.idUrl}>
+                      <a href={row.idUrl} target="_blank">{row.id}</a>
+                    </template>
+                    <template lwc:else>{row.id}</template>
+                  </td>
+                  <td class="sfi-error-cell">{row.error}</td>
+                  <template for:each={row.values} for:item="cell">
+                    <td key={cell.key} class="slds-truncate">{cell.value}</td>
+                  </template>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </template>
+  </div>
+</template>
