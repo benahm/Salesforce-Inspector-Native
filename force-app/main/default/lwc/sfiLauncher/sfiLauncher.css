@@ -1,0 +1,67 @@
+.sfi-launcher {
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
+}
+
+.sfi-tabs {
+  flex-shrink: 0;
+  padding: 0 0.5rem;
+}
+
+.sfi-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 0.5rem 0;
+}
+
+/* The last scrollable block of a tab takes the remaining height. */
+.sfi-fill {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.sfi-version {
+  align-self: center;
+  white-space: nowrap;
+}
+
+.sfi-body > .sfi-fill:last-child {
+  padding-bottom: 0.5rem;
+}
+
+.sfi-mono {
+  font-family: "Consolas", "Monaco", monospace;
+  font-size: 0.75rem;
+}
+
+.sfi-table td {
+  vertical-align: top;
+  padding: 0.25rem 0.5rem;
+}
+
+.sfi-field-name {
+  width: 45%;
+}
+
+.sfi-value {
+  white-space: pre-wrap;
+  word-break: break-word;
+  cursor: copy;
+}
+
+.sfi-value:hover {
+  background: #f3f3f3;
+}
+
+.sfi-search-type {
+  width: 11rem;
+}
+
+.sfi-spinner-holder {
+  position: relative;
+  min-height: 80px;
+}

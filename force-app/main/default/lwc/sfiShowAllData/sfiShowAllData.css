@@ -1,0 +1,65 @@
+.sfi-container {
+  position: relative;
+  min-height: 200px;
+}
+
+.sfi-mono {
+  font-family: "Consolas", "Monaco", monospace;
+  font-size: 0.75rem;
+}
+
+.sfi-id-input {
+  width: 14rem;
+}
+
+.sfi-filter {
+  width: 24rem;
+}
+
+.sfi-table td {
+  vertical-align: top;
+}
+
+.sfi-col-label {
+  width: 20%;
+}
+
+.sfi-col-name {
+  width: 22%;
+}
+
+.sfi-col-type {
+  width: 14%;
+}
+
+.sfi-value {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.sfi-copy {
+  visibility: hidden;
+  margin-left: 0.25rem;
+}
+
+tr:hover .sfi-copy {
+  visibility: visible;
+}
+
+.sfi-custom td:first-child {
+  border-left: 3px solid #0176d3;
+}
+
+.sfi-changed {
+  color: #0176d3;
+  margin-left: 0.25rem;
+}
+
+.sfi-spinner-holder {
+  position: relative;
+  min-height: 120px;
+}
+
+.sfi-footer {
+  position: sticky;
+}

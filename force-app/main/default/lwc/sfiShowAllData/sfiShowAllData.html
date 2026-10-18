@@ -1,0 +1,301 @@
+<template>
+  <div class="slds-card sfi-container">
+    <!-- Header -->
+    <div class="slds-page-header slds-page-header_record-home">
+      <div class="slds-page-header__row">
+        <div class="slds-page-header__col-title">
+          <div class="slds-media">
+            <div class="slds-media__figure">
+              <lightning-icon
+                icon-name="utility:database"
+                size="small"
+              ></lightning-icon>
+            </div>
+            <div class="slds-media__body">
+              <p class="slds-text-title_caps">
+                Show All Data
+                <template lwc:if={hasData}>
+                  · {data.objectLabel} (<span class="sfi-mono"
+                    >{data.objectApiName}</span
+                  >)
+                </template>
+              </p>
+              <template lwc:if={hasData}>
+                <h1 class="slds-page-header__title slds-truncate" title={title}>
+                  {title}
+                </h1>
+                <p class="slds-text-body_small">
+                  <span class="sfi-mono">{data.recordId}</span>
+                  <lightning-button-icon
+                    icon-name="utility:copy"
+                    variant="bare"
+                    size="small"
+                    alternative-text="Copy Id"
+                    title="Copy Id"
+                    data-value={data.recordId}
+                    onclick={handleCopy}
+                    class="slds-m-left_xx-small"
+                  ></lightning-button-icon>
+                </p>
+              </template>
+            </div>
+          </div>
+        </div>
+        <div class="slds-page-header__col-actions">
+          <div class="slds-grid slds-grid_vertical-align-center">
+            <lightning-input
+              type="text"
+              variant="label-hidden"
+              placeholder="Paste a record Id"
+              value={idInput}
+              onchange={handleIdInput}
+              onkeyup={handleIdKeyUp}
+              class="sfi-id-input slds-m-right_x-small"
+            ></lightning-input>
+            <lightning-button
+              label="Show"
+              onclick={handleShow}
+              class="slds-m-right_small"
+            ></lightning-button>
+            <template lwc:if={hasData}>
+              <lightning-button-group>
+                <lightning-button
+                  label="Refresh"
+                  icon-name="utility:refresh"
+                  onclick={handleRefresh}
+                ></lightning-button>
+                <template lwc:if={canEdit}>
+                  <lightning-button
+                    label="Edit"
+                    icon-name="utility:edit"
+                    onclick={handleEdit}
+                  ></lightning-button>
+                </template>
+              </lightning-button-group>
+              <a href={recordUrl} target="_blank" class="slds-m-left_small"
+                >Open record</a
+              >
+              <a href={objectSetupUrl} target="_blank" class="slds-m-left_small"
+                >Object Manager</a
+              >
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <template lwc:if={error}>
+      <div
+        class="slds-notify slds-notify_alert slds-alert_error slds-m-around_small"
+        role="alert"
+      >
+        {error}
+      </div>
+    </template>
+
+    <template lwc:if={isLoading}>
+      <div class="sfi-spinner-holder">
+        <lightning-spinner
+          alternative-text="Loading"
+          size="medium"
+        ></lightning-spinner>
+      </div>
+    </template>
+
+    <template lwc:if={hasNoRecord}>
+      <div
+        class="slds-p-around_large slds-text-align_center slds-text-color_weak"
+      >
+        Paste a record Id above to see all its fields.
+      </div>
+    </template>
+
+    <template lwc:if={hasData}>
+      <!-- Toolbar -->
+      <div
+        class="slds-grid slds-grid_vertical-align-center slds-p-horizontal_small slds-p-top_small"
+      >
+        <lightning-input
+          type="search"
+          variant="label-hidden"
+          placeholder="Filter by label, API name or value"
+          value={filter}
+          onchange={handleFilter}
+          class="sfi-filter"
+        ></lightning-input>
+        <lightning-input
+          type="checkbox"
+          label="Hide empty values"
+          checked={hideEmpty}
+          onchange={handleHideEmpty}
+          class="slds-m-left_medium"
+        ></lightning-input>
+        <span
+          class="slds-col_bump-left slds-text-body_small slds-text-color_weak"
+          >{fieldCountLabel}</span
+        >
+      </div>
+
+      <template lwc:if={isEditing}>
+        <!-- Edit mode: only updateable fields, only modified fields are saved -->
+        <lightning-record-edit-form
+          record-id={data.recordId}
+          object-api-name={data.objectApiName}
+          onsubmit={handleSubmit}
+          onsuccess={handleSaveSuccess}
+          onerror={handleSaveError}
+        >
+          <div class="slds-p-around_small">
+            <lightning-messages></lightning-messages>
+            <div class="slds-grid slds-wrap slds-gutters_x-small">
+              <template for:each={editableRows} for:item="field">
+                <div
+                  key={field.name}
+                  class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3"
+                >
+                  <div class="slds-form-element slds-m-bottom_x-small">
+                    <span class="slds-form-element__label">
+                      {field.label} (<span class="sfi-mono">{field.name}</span>)
+                      <template lwc:if={field.changed}>
+                        <span class="sfi-changed" title="Modified">●</span>
+                      </template>
+                    </span>
+                    <lightning-input-field
+                      field-name={field.name}
+                      data-name={field.name}
+                      variant="label-hidden"
+                      onchange={handleFieldChange}
+                    ></lightning-input-field>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+          <div class="slds-docked-form-footer sfi-footer">
+            <span class="slds-m-right_small slds-text-body_small"
+              >{changedCount} field(s) modified</span
+            >
+            <lightning-button
+              label="Cancel"
+              onclick={handleCancelEdit}
+              class="slds-m-right_x-small"
+            ></lightning-button>
+            <lightning-button
+              variant="brand"
+              type="submit"
+              label="Save"
+              disabled={saveDisabled}
+            ></lightning-button>
+          </div>
+        </lightning-record-edit-form>
+      </template>
+      <template lwc:else>
+        <lightning-tabset>
+          <lightning-tab label={fieldsTabLabel}>
+            <table
+              class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped sfi-table"
+            >
+              <thead>
+                <tr class="slds-line-height_reset">
+                  <th scope="col" class="sfi-col-label">Label</th>
+                  <th scope="col" class="sfi-col-name">API Name</th>
+                  <th scope="col" class="sfi-col-type">Type</th>
+                  <th scope="col">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template for:each={fieldRows} for:item="field">
+                  <tr key={field.name} class={field.rowClass}>
+                    <td title={field.helpText}>{field.label}</td>
+                    <td>
+                      <span class="sfi-mono">{field.name}</span>
+                      <lightning-button-icon
+                        icon-name="utility:copy"
+                        variant="bare"
+                        size="small"
+                        alternative-text="Copy API name"
+                        data-value={field.name}
+                        onclick={handleCopy}
+                        class="sfi-copy"
+                      ></lightning-button-icon>
+                    </td>
+                    <td class="slds-text-color_weak">{field.typeLabel}</td>
+                    <td class="sfi-value">
+                      <template lwc:if={field.isReference}>
+                        <a
+                          href={field.referenceUrl}
+                          class="sfi-mono"
+                          title="Show all data of this record"
+                          >{field.value}</a
+                        >
+                      </template>
+                      <template lwc:else>
+                        <span>{field.value}</span>
+                      </template>
+                      <template lwc:if={field.value}>
+                        <lightning-button-icon
+                          icon-name="utility:copy"
+                          variant="bare"
+                          size="small"
+                          alternative-text="Copy value"
+                          data-value={field.value}
+                          onclick={handleCopy}
+                          class="sfi-copy"
+                        ></lightning-button-icon>
+                      </template>
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </lightning-tab>
+          <lightning-tab label={relationshipTabLabel}>
+            <table
+              class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped sfi-table"
+            >
+              <thead>
+                <tr class="slds-line-height_reset">
+                  <th scope="col">Relationship</th>
+                  <th scope="col">Child Object</th>
+                  <th scope="col">Field</th>
+                  <th scope="col">Records</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <template for:each={relationshipRows} for:item="rel">
+                  <tr key={rel.key}>
+                    <td class="sfi-mono">{rel.relationshipName}</td>
+                    <td>
+                      {rel.childObjectLabel} (<span class="sfi-mono"
+                        >{rel.childObject}</span
+                      >)
+                    </td>
+                    <td class="sfi-mono">{rel.field}</td>
+                    <td>
+                      <template lwc:if={rel.hasCount}>{rel.count}</template>
+                      <template lwc:else>
+                        <lightning-button
+                          label="Count"
+                          variant="base"
+                          data-child={rel.childObject}
+                          data-field={rel.field}
+                          onclick={handleCount}
+                        ></lightning-button>
+                      </template>
+                    </td>
+                    <td>
+                      <a href={rel.relatedListUrl} target="_blank"
+                        >Related list</a
+                      >
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </lightning-tab>
+        </lightning-tabset>
+      </template>
+    </template>
+  </div>
+</template>

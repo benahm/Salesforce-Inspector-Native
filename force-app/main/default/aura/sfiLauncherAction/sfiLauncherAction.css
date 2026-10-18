@@ -1,0 +1,4 @@
+/* Cancel the 1rem side padding of the docked composer body. */
+.THIS {
+  margin: 0 -1rem;
+}
