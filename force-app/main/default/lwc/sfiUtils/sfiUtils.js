@@ -26,6 +26,10 @@ export function dataImportUrl(objectApiName) {
     : "/lightning/cmp/c__sfiDataImport";
 }
 
+export const ORG_LIMITS_URL = "/lightning/cmp/c__sfiOrgLimits";
+
+export const EVENT_MONITOR_URL = "/lightning/cmp/c__sfiEventMonitor";
+
 export function recordUrl(recordId) {
   return `/lightning/r/${encodeURIComponent(recordId)}/view`;
 }
@@ -65,8 +69,8 @@ export const TOOL_SECTIONS = [
     title: "Platform Tools",
     tools: [
       { label: "REST Explorer" },
-      { label: "Event Monitor" },
-      { label: "Org Limits" },
+      { label: "Event Monitor", key: "eventMonitor" },
+      { label: "Org Limits", key: "orgLimits" },
       { label: "API Statistics" }
     ]
   }

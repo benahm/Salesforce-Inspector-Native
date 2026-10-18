@@ -1,0 +1,172 @@
+<template>
+  <div class="slds-card sfi-container">
+    <div class="slds-page-header">
+      <div class="slds-page-header__row">
+        <div class="slds-page-header__col-title">
+          <div class="slds-media slds-media_center">
+            <div class="slds-media__figure">
+              <lightning-icon
+                icon-name="utility:signpost"
+                size="small"
+              ></lightning-icon>
+            </div>
+            <div class="slds-media__body">
+              <h1 class="slds-page-header__title">Event Monitor</h1>
+            </div>
+          </div>
+        </div>
+        <div class="slds-page-header__col-actions">
+          <span class={statusClass}>{statusLabel}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subscription settings -->
+    <div class="slds-grid slds-wrap slds-grid_vertical-align-end sfi-settings">
+      <lightning-combobox
+        label="Channel type"
+        value={channelType}
+        options={channelTypes}
+        onchange={handleChannelType}
+        disabled={settingsDisabled}
+        class="sfi-type"
+      ></lightning-combobox>
+      <template lwc:if={isManual}>
+        <lightning-input
+          label="Channel"
+          placeholder="/event/LoginEventStream or /event/MyChannel__chn"
+          value={channelPath}
+          onchange={handleChannelPath}
+          disabled={settingsDisabled}
+          class="sfi-channel"
+        ></lightning-input>
+      </template>
+      <template lwc:else>
+        <lightning-combobox
+          label="Event"
+          placeholder={channelPlaceholder}
+          value={channelPath}
+          options={channels}
+          onchange={handleChannel}
+          disabled={settingsDisabled}
+          class="sfi-channel"
+        ></lightning-combobox>
+      </template>
+      <lightning-combobox
+        label="Replay from"
+        value={replayId}
+        options={replayOptions}
+        onchange={handleReplay}
+        disabled={settingsDisabled}
+        class="sfi-replay"
+      ></lightning-combobox>
+      <template lwc:if={isSubscribed}>
+        <lightning-button
+          label="Unsubscribe"
+          icon-name="utility:stop"
+          onclick={handleUnsubscribe}
+        ></lightning-button>
+      </template>
+      <template lwc:else>
+        <lightning-button
+          variant="brand"
+          label="Subscribe"
+          icon-name="utility:play"
+          disabled={subscribeDisabled}
+          onclick={handleSubscribe}
+        ></lightning-button>
+      </template>
+    </div>
+
+    <template lwc:if={isManual}>
+      <p
+        class="slds-text-body_small slds-text-color_weak slds-p-horizontal_small"
+      >
+        Custom channels and real-time events cannot be listed without the
+        Tooling API: type the channel path.
+      </p>
+    </template>
+
+    <template lwc:if={error}>
+      <div
+        class="slds-notify slds-notify_alert slds-alert_error slds-m-around_small"
+        role="alert"
+      >
+        {error}
+      </div>
+    </template>
+
+    <template lwc:if={isLoadingChannels}>
+      <div class="sfi-spinner-holder">
+        <lightning-spinner
+          alternative-text="Loading"
+          size="small"
+        ></lightning-spinner>
+      </div>
+    </template>
+
+    <!-- Received events -->
+    <div class="slds-grid slds-grid_vertical-align-center sfi-toolbar">
+      <lightning-input
+        type="search"
+        variant="label-hidden"
+        label="Filter"
+        placeholder="Filter events"
+        value={filter}
+        onchange={handleFilter}
+        class="sfi-filter"
+      ></lightning-input>
+      <span class="slds-text-body_small slds-text-color_weak"
+        >{countLabel}</span
+      >
+      <lightning-button-group class="slds-col_bump-left">
+        <lightning-button
+          label="Copy all"
+          icon-name="utility:copy"
+          onclick={handleCopyAll}
+        ></lightning-button>
+        <lightning-button
+          label="Clear"
+          icon-name="utility:delete"
+          onclick={handleClear}
+        ></lightning-button>
+      </lightning-button-group>
+    </div>
+
+    <template lwc:if={hasNoEvents}>
+      <p
+        class="slds-p-around_large slds-text-align_center slds-text-color_weak"
+      >
+        {emptyLabel}
+      </p>
+    </template>
+
+    <div class="slds-p-horizontal_small slds-p-bottom_small">
+      <template for:each={eventRows} for:item="row">
+        <div key={row.key} class="sfi-event">
+          <div
+            class="slds-grid slds-grid_vertical-align-center sfi-event-header"
+          >
+            <span class="sfi-mono slds-text-color_weak">{row.receivedAt}</span>
+            <span class="slds-col slds-truncate sfi-event-summary"
+              >{row.summary}</span
+            >
+            <span class="sfi-mono slds-text-color_weak"
+              >replayId {row.replayId}</span
+            >
+            <lightning-button-icon
+              icon-name="utility:copy"
+              variant="bare"
+              size="small"
+              alternative-text="Copy event"
+              title="Copy event"
+              data-value={row.json}
+              onclick={handleCopy}
+            ></lightning-button-icon>
+          </div>
+          <pre class="sfi-mono sfi-json">{row.json}</pre>
+        </div>
+      </template>
+    </div>
+  </div>
+</template>

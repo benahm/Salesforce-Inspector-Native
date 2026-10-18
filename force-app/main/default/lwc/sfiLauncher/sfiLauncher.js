@@ -10,7 +10,9 @@ import {
   dataExportUrl,
   dataImportUrl,
   debounce,
+  EVENT_MONITOR_URL,
   highlight,
+  ORG_LIMITS_URL,
   reduceErrors,
   showAllDataUrl,
   TOOL_SECTIONS,
@@ -121,7 +123,9 @@ export default class SfiLauncher extends LightningElement {
       dataExport: dataExportUrl(
         objectApiName ? `SELECT Id FROM ${objectApiName} LIMIT 100` : null
       ),
-      dataImport: dataImportUrl(objectApiName)
+      dataImport: dataImportUrl(objectApiName),
+      eventMonitor: EVENT_MONITOR_URL,
+      orgLimits: ORG_LIMITS_URL
     };
     return TOOL_SECTIONS.map((section) => ({
       ...section,

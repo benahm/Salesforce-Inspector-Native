@@ -1,0 +1,103 @@
+<template>
+  <div class="slds-card sfi-container">
+    <div class="slds-page-header">
+      <div class="slds-page-header__row">
+        <div class="slds-page-header__col-title">
+          <div class="slds-media slds-media_center">
+            <div class="slds-media__figure">
+              <lightning-icon
+                icon-name="utility:metrics"
+                size="small"
+              ></lightning-icon>
+            </div>
+            <div class="slds-media__body">
+              <h1 class="slds-page-header__title">Org Limits</h1>
+            </div>
+          </div>
+        </div>
+        <div class="slds-page-header__col-actions">
+          <div class="slds-grid slds-grid_vertical-align-center sfi-actions">
+            <span class="slds-text-body_small slds-text-color_weak"
+              >{countLabel}</span
+            >
+            <lightning-input
+              type="search"
+              variant="label-hidden"
+              label="Filter"
+              placeholder="Filter limits"
+              value={filter}
+              onchange={handleFilter}
+              class="sfi-filter"
+            ></lightning-input>
+            <lightning-combobox
+              variant="label-hidden"
+              label="Sort by"
+              value={sortBy}
+              options={sortOptions}
+              onchange={handleSort}
+              class="sfi-sort"
+            ></lightning-combobox>
+            <lightning-button-group>
+              <lightning-button
+                label="Refresh"
+                icon-name="utility:refresh"
+                onclick={handleRefresh}
+              ></lightning-button>
+              <lightning-button
+                label="Copy as JSON"
+                icon-name="utility:copy"
+                onclick={handleCopyJson}
+              ></lightning-button>
+            </lightning-button-group>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <template lwc:if={error}>
+      <div
+        class="slds-notify slds-notify_alert slds-alert_error slds-m-around_small"
+        role="alert"
+      >
+        {error}
+      </div>
+    </template>
+
+    <template lwc:if={isLoading}>
+      <div class="sfi-spinner-holder">
+        <lightning-spinner
+          alternative-text="Loading"
+          size="medium"
+        ></lightning-spinner>
+      </div>
+    </template>
+
+    <template lwc:if={hasNoRows}>
+      <p
+        class="slds-p-around_large slds-text-align_center slds-text-color_weak"
+      >
+        No limits match the filter.
+      </p>
+    </template>
+
+    <div class="sfi-grid slds-p-around_small">
+      <template for:each={rows} for:item="row">
+        <div key={row.name} class="sfi-limit" title={row.name}>
+          <div class="slds-grid slds-grid_vertical-align-center">
+            <span class="slds-col slds-truncate sfi-limit-label"
+              >{row.label}</span
+            >
+            <span class="sfi-percent">{row.percentLabel}</span>
+          </div>
+          <div class="sfi-bar">
+            <div class={row.barClass} style={row.barStyle}></div>
+          </div>
+          <div class="slds-grid slds-text-body_small slds-text-color_weak">
+            <span class="slds-col slds-truncate">{row.detail}</span>
+            <span>{row.remainingLabel}</span>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</template>

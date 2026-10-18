@@ -1,0 +1,67 @@
+.sfi-container {
+  position: relative;
+  min-height: 200px;
+}
+
+.sfi-mono {
+  font-family: "Consolas", "Monaco", monospace;
+  font-size: 0.75rem;
+}
+
+.sfi-settings {
+  gap: 0.5rem;
+  padding: 0.75rem;
+}
+
+.sfi-type {
+  width: 13rem;
+}
+
+.sfi-channel {
+  flex: 1;
+  min-width: 18rem;
+}
+
+.sfi-replay {
+  width: 13rem;
+}
+
+.sfi-toolbar {
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-top: 1px solid #e5e5e5;
+}
+
+.sfi-filter {
+  width: 20rem;
+}
+
+.sfi-event {
+  border: 1px solid #e5e5e5;
+  border-radius: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.sfi-event-header {
+  gap: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  background: #f3f3f3;
+}
+
+.sfi-event-summary {
+  font-weight: 700;
+}
+
+.sfi-json {
+  margin: 0;
+  padding: 0.5rem;
+  max-height: 20rem;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.sfi-spinner-holder {
+  position: relative;
+  min-height: 60px;
+}
