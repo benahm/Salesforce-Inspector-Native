@@ -36,193 +36,39 @@ export function objectSetupUrl(objectApiName, page = "Details") {
 
 export const OBJECT_SETUP_PAGES = [
   { label: "Details", page: "Details" },
-  { label: "Fields & Relationships", page: "FieldsAndRelationships" },
-  { label: "Page Layouts", page: "PageLayouts" },
+  { label: "Fields", page: "FieldsAndRelationships" },
+  { label: "Layouts", page: "PageLayouts" },
   { label: "Lightning Pages", page: "LightningPages" },
   { label: "Record Types", page: "RecordTypes" },
   { label: "Validation Rules", page: "ValidationRules" },
   { label: "Triggers", page: "ApexTriggers" },
-  { label: "Buttons, Links & Actions", page: "ButtonsLinksActions" }
+  { label: "Actions", page: "ButtonsLinksActions" }
 ];
 
-export const SETUP_SHORTCUTS = [
+/**
+ * Tools listed in the launcher "+" tab. A tool without key is not built yet and
+ * shows as "Soon": give it a key (and a url in the launcher) when it ships.
+ */
+export const TOOL_SECTIONS = [
   {
-    label: "Users",
-    section: "Users",
-    url: "/lightning/setup/ManageUsers/home"
+    title: "Data & Metadata",
+    tools: [
+      { label: "Data Export", key: "dataExport" },
+      { label: "Data Import", key: "dataImport" },
+      { label: "Logs Viewer" },
+      { label: "Field Creator" },
+      { label: "Download Metadata" },
+      { label: "Dependencies Explorer" }
+    ]
   },
   {
-    label: "Profiles",
-    section: "Users",
-    url: "/lightning/setup/EnhancedProfiles/home"
-  },
-  {
-    label: "Permission Sets",
-    section: "Users",
-    url: "/lightning/setup/PermSets/home"
-  },
-  {
-    label: "Permission Set Groups",
-    section: "Users",
-    url: "/lightning/setup/PermSetGroups/home"
-  },
-  { label: "Roles", section: "Users", url: "/lightning/setup/Roles/home" },
-  {
-    label: "Public Groups",
-    section: "Users",
-    url: "/lightning/setup/PublicGroups/home"
-  },
-  { label: "Queues", section: "Users", url: "/lightning/setup/Queues/home" },
-  {
-    label: "Login History",
-    section: "Users",
-    url: "/lightning/setup/OrgLoginHistory/home"
-  },
-  {
-    label: "Object Manager",
-    section: "Objects",
-    url: "/lightning/setup/ObjectManager/home"
-  },
-  {
-    label: "Schema Builder",
-    section: "Objects",
-    url: "/lightning/setup/SchemaBuilder/home"
-  },
-  {
-    label: "Custom Metadata Types",
-    section: "Objects",
-    url: "/lightning/setup/CustomMetadata/home"
-  },
-  {
-    label: "Custom Settings",
-    section: "Objects",
-    url: "/lightning/setup/CustomSettings/home"
-  },
-  {
-    label: "Picklist Value Sets",
-    section: "Objects",
-    url: "/lightning/setup/Picklists/home"
-  },
-  {
-    label: "Sharing Settings",
-    section: "Security",
-    url: "/lightning/setup/SecuritySharing/home"
-  },
-  {
-    label: "Named Credentials",
-    section: "Security",
-    url: "/lightning/setup/NamedCredential/home"
-  },
-  {
-    label: "Remote Site Settings",
-    section: "Security",
-    url: "/lightning/setup/SecurityRemoteProxy/home"
-  },
-  {
-    label: "Session Settings",
-    section: "Security",
-    url: "/lightning/setup/SecuritySession/home"
-  },
-  { label: "Flows", section: "Automation", url: "/lightning/setup/Flows/home" },
-  {
-    label: "Process Automation Settings",
-    section: "Automation",
-    url: "/lightning/setup/WorkflowSettings/home"
-  },
-  {
-    label: "Apex Classes",
-    section: "Code",
-    url: "/lightning/setup/ApexClasses/home"
-  },
-  {
-    label: "Apex Triggers",
-    section: "Code",
-    url: "/lightning/setup/ApexTriggers/home"
-  },
-  {
-    label: "Apex Jobs",
-    section: "Code",
-    url: "/lightning/setup/AsyncApexJobs/home"
-  },
-  {
-    label: "Scheduled Jobs",
-    section: "Code",
-    url: "/lightning/setup/ScheduledJobs/home"
-  },
-  {
-    label: "Debug Logs",
-    section: "Code",
-    url: "/lightning/setup/ApexDebugLogs/home"
-  },
-  {
-    label: "Lightning Components",
-    section: "Code",
-    url: "/lightning/setup/LightningComponentBundles/home"
-  },
-  {
-    label: "Visualforce Pages",
-    section: "Code",
-    url: "/lightning/setup/ApexPages/home"
-  },
-  {
-    label: "Static Resources",
-    section: "Code",
-    url: "/lightning/setup/StaticResources/home"
-  },
-  {
-    label: "Custom Labels",
-    section: "Code",
-    url: "/lightning/setup/ExternalStrings/home"
-  },
-  {
-    label: "Deployment Status",
-    section: "Deploy",
-    url: "/lightning/setup/DeployStatus/home"
-  },
-  {
-    label: "Inbound Change Sets",
-    section: "Deploy",
-    url: "/lightning/setup/InboundChangeSet/home"
-  },
-  {
-    label: "Outbound Change Sets",
-    section: "Deploy",
-    url: "/lightning/setup/OutboundChangeSet/home"
-  },
-  {
-    label: "Installed Packages",
-    section: "Deploy",
-    url: "/lightning/setup/ImportedPackage/home"
-  },
-  {
-    label: "Email Deliverability",
-    section: "Org",
-    url: "/lightning/setup/OrgEmailSettings/home"
-  },
-  {
-    label: "Company Information",
-    section: "Org",
-    url: "/lightning/setup/CompanyProfileInfo/home"
-  },
-  {
-    label: "Setup Audit Trail",
-    section: "Org",
-    url: "/lightning/setup/SecurityEvents/home"
-  },
-  {
-    label: "App Manager",
-    section: "Org",
-    url: "/lightning/setup/NavigationMenus/home"
-  },
-  {
-    label: "Global Actions",
-    section: "Org",
-    url: "/lightning/setup/GlobalActions/home"
-  },
-  {
-    label: "Publisher Layouts",
-    section: "Org",
-    url: "/lightning/setup/GlobalPublisherLayouts/home"
+    title: "Platform Tools",
+    tools: [
+      { label: "REST Explorer" },
+      { label: "Event Monitor" },
+      { label: "Org Limits" },
+      { label: "API Statistics" }
+    ]
   }
 ];
 

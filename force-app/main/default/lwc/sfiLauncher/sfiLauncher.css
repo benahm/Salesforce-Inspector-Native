@@ -65,3 +65,62 @@
   position: relative;
   min-height: 80px;
 }
+
+.sfi-tool-section + .sfi-tool-section {
+  border-top: 1px solid #e5e5e5;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+}
+
+.sfi-tool-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.sfi-tool {
+  margin: 0;
+  justify-content: center;
+  border-radius: 1rem;
+}
+
+.sfi-soon {
+  color: #939393;
+  cursor: default;
+}
+
+.sfi-links {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.5rem;
+  row-gap: 0.125rem;
+}
+
+.sfi-info-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.sfi-info-table th {
+  width: 6rem;
+  font-weight: 700;
+  color: #444;
+  padding: 0.125rem 0.5rem 0.125rem 0;
+  vertical-align: top;
+}
+
+.sfi-info-table td {
+  padding: 0.125rem 0;
+}
+
+.sfi-button-rows {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.sfi-tab-icon {
+  --slds-c-icon-color-foreground-default: currentColor;
+}

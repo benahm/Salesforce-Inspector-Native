@@ -4,6 +4,9 @@ import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import getRecord from "@salesforce/apex/SFI_RecordService.getRecord";
 import getObjectInfo from "@salesforce/apex/SFI_DescribeService.getObjectInfo";
 import search from "@salesforce/apex/SFI_SearchService.search";
+import getUser from "@salesforce/apex/SFI_UserService.getUser";
+import searchUsers from "@salesforce/apex/SFI_UserService.searchUsers";
+import setDebugMode from "@salesforce/apex/SFI_UserService.setDebugMode";
 import {
   containsIgnoreCase,
   copyToClipboard,
@@ -13,11 +16,11 @@ import {
   highlight,
   isSalesforceId,
   OBJECT_SETUP_PAGES,
-  objectSetupUrl,
   recordUrl,
+  objectSetupUrl,
   reduceErrors,
-  SETUP_SHORTCUTS,
   showAllDataUrl,
+  TOOL_SECTIONS,
   VERSION
 } from "c/sfiUtils";
 
@@ -59,8 +62,13 @@ export default class SfiLauncher extends LightningElement {
     { label: "Flows", value: "Flow" }
   ];
 
-  // Shortcuts tab
-  shortcutFilter = "";
+  // Users tab
+  user;
+  userSearch = "";
+  userResults = [];
+  userError;
+  isLoadingUser = false;
+  isSavingUser = false;
 
   activeTab = "context";
   availableHeight;
@@ -68,6 +76,7 @@ export default class SfiLauncher extends LightningElement {
   constructor() {
     super();
     this.debouncedSearch = debounce(() => this.runSearch(), 300);
+    this.debouncedUserSearch = debounce(() => this.runUserSearch(), 300);
     this.resizeHandler = () => this.updateHeight();
   }
 
@@ -101,14 +110,13 @@ export default class SfiLauncher extends LightningElement {
   }
 
   get tabs() {
-    const tabs = [{ value: "context", label: this.contextTabLabel }];
-    if (this.record) {
-      tabs.push({ value: "setup", label: "Setup" });
-    }
-    tabs.push(
+    // Same order as Salesforce Inspector Reloaded, then the native extras.
+    const tabs = [
+      { value: "context", label: "Objects" },
+      { value: "users", label: "Users" },
       { value: "search", label: "Search" },
-      { value: "shortcuts", label: "Shortcuts" }
-    );
+      { value: "tools", label: "Tools", icon: "utility:apps" }
+    ];
     return tabs.map((tab) => ({
       ...tab,
       selected: String(tab.value === this.activeTab),
@@ -122,20 +130,53 @@ export default class SfiLauncher extends LightningElement {
     return this.activeTab === "context";
   }
 
-  get isSetupTab() {
-    return this.activeTab === "setup";
-  }
-
   get isSearchTab() {
     return this.activeTab === "search";
   }
 
-  get isShortcutsTab() {
-    return this.activeTab === "shortcuts";
+  get isToolsTab() {
+    return this.activeTab === "tools";
   }
 
-  get showObjectSetup() {
-    return this.hasObjectOnly;
+  get showAllDataUrl() {
+    return showAllDataUrl(this.record?.recordId);
+  }
+
+  get recordViewUrl() {
+    return recordUrl(this.record?.recordId);
+  }
+
+  // Tools receive the current object so they open pre-filled.
+  get toolSections() {
+    const objectApiName = this.objectApiName;
+    const urls = {
+      dataExport: dataExportUrl(
+        objectApiName ? `SELECT Id FROM ${objectApiName} LIMIT 100` : null
+      ),
+      dataImport: dataImportUrl(objectApiName)
+    };
+    return TOOL_SECTIONS.map((section) => ({
+      ...section,
+      tools: section.tools.map((tool) => {
+        const url = tool.key ? urls[tool.key] : null;
+        return {
+          label: tool.label,
+          url,
+          soon: !url,
+          ariaDisabled: url ? "false" : "true",
+          title: url ? `Open ${tool.label} in a new tab` : "Coming soon",
+          className: url
+            ? "slds-button slds-button_neutral sfi-tool"
+            : "slds-button slds-button_neutral sfi-tool sfi-soon"
+        };
+      })
+    }));
+  }
+
+  handleToolClick(event) {
+    if (!event.currentTarget.getAttribute("href")) {
+      event.preventDefault();
+    }
   }
 
   handleTab(event) {
@@ -143,6 +184,103 @@ export default class SfiLauncher extends LightningElement {
     this.activeTab = event.currentTarget.dataset.tab;
     if (this.activeTab === "search" && !this.searchResults.length) {
       this.runSearch();
+    }
+    if (this.activeTab === "users" && !this.user) {
+      this.loadUser(null);
+    }
+  }
+
+  get isUsersTab() {
+    return this.activeTab === "users";
+  }
+
+  // ---- Users tab ----
+
+  async loadUser(userId) {
+    this.isLoadingUser = true;
+    this.userError = undefined;
+    try {
+      this.user = await getUser({ userId });
+    } catch (error) {
+      this.userError = reduceErrors(error);
+    } finally {
+      this.isLoadingUser = false;
+    }
+  }
+
+  handleUserSearch(event) {
+    this.userSearch = event.target.value;
+    this.debouncedUserSearch();
+  }
+
+  async runUserSearch() {
+    try {
+      this.userResults = await searchUsers({ searchTerm: this.userSearch });
+    } catch (error) {
+      this.userResults = [];
+      this.userError = reduceErrors(error);
+    }
+  }
+
+  get userResultRows() {
+    return this.userResults.map((u) => ({
+      ...u,
+      detail: `${u.username}${u.isActive ? "" : " · inactive"}`
+    }));
+  }
+
+  get hasUserResults() {
+    return this.userResults.length > 0;
+  }
+
+  handleUserPick(event) {
+    this.userResults = [];
+    this.userSearch = "";
+    this.loadUser(event.currentTarget.dataset.id);
+  }
+
+  get userLinks() {
+    const u = this.user;
+    if (!u) {
+      return {};
+    }
+    const id = encodeURIComponent(u.id);
+    return {
+      details: `/lightning/setup/ManageUsers/page?address=%2F${id}%3Fnoredirect%3D1%26isUserEntityOverride%3D1`,
+      showAllData: showAllDataUrl(u.id),
+      profile: `/lightning/setup/EnhancedProfiles/page?address=%2F${u.profileId}`,
+      permissionSets: `/lightning/setup/PermSets/page?address=%2Fudd%2FPermissionSet%2FassignPermissionSet.apexp%3FuserId%3D${id}`,
+      permissionSetGroups: `/lightning/setup/PermSetGroups/page?address=%2Fudd%2FPermissionSetGroup%2FassignPermissionSet.apexp%3FuserId%3D${id}%26isPermsetGroup%3D1`,
+      loginAs: `/servlet/servlet.su?oid=${encodeURIComponent(u.orgId)}&suorgadminid=${id}&retURL=%2F&targetURL=%2F`
+    };
+  }
+
+  get userLanguage() {
+    return this.user ? `${this.user.language} | ${this.user.locale}` : "";
+  }
+
+  get canLoginAs() {
+    return this.user && !this.user.isCurrentUser && this.user.isActive;
+  }
+
+  get debugModeLabel() {
+    return this.user?.debugMode ? "Disable Debug Mode" : "Enable Debug Mode";
+  }
+
+  async handleToggleDebugMode() {
+    const enabled = !this.user.debugMode;
+    this.isSavingUser = true;
+    try {
+      this.user = await setDebugMode({ userId: this.user.id, enabled });
+      this.toast(
+        `Debug mode ${enabled ? "enabled" : "disabled"}`,
+        this.user.name,
+        "success"
+      );
+    } catch (error) {
+      this.toast("Debug mode update failed", reduceErrors(error), "error");
+    } finally {
+      this.isSavingUser = false;
     }
   }
 
@@ -156,9 +294,6 @@ export default class SfiLauncher extends LightningElement {
     }
     this.recordId = recordId;
     this.objectApiName = objectApiName;
-    if (this.activeTab === "setup") {
-      this.activeTab = "context";
-    }
     this.loadContext();
   }
 
@@ -200,13 +335,6 @@ export default class SfiLauncher extends LightningElement {
     return !this.record && !this.objectInfo && !this.isLoadingContext;
   }
 
-  get contextTabLabel() {
-    if (this.record) {
-      return "Record";
-    }
-    return this.objectInfo ? "Object" : "Inspect";
-  }
-
   get objectLabel() {
     return this.record?.objectLabel || this.objectInfo?.label;
   }
@@ -215,32 +343,16 @@ export default class SfiLauncher extends LightningElement {
     return this.record?.recordName || this.record?.recordId;
   }
 
-  get showAllDataUrl() {
-    return showAllDataUrl(this.record?.recordId);
-  }
-
-  get dataExportUrl() {
-    return dataExportUrl(
-      this.objectApiName
-        ? `SELECT Id FROM ${this.objectApiName} LIMIT 100`
-        : null
-    );
-  }
-
-  get dataImportUrl() {
-    return dataImportUrl(this.objectApiName);
-  }
-
-  get recordViewUrl() {
-    return recordUrl(this.record?.recordId);
-  }
-
   get setupLinks() {
     const objectApiName = this.objectApiName;
-    return OBJECT_SETUP_PAGES.map((p) => ({
-      ...p,
-      url: objectSetupUrl(objectApiName, p.page)
-    }));
+    return [
+      ...OBJECT_SETUP_PAGES.map((p) => ({
+        key: p.page,
+        label: p.label,
+        url: objectSetupUrl(objectApiName, p.page)
+      })),
+      { key: "list", label: "List", url: `/lightning/o/${objectApiName}/list` }
+    ];
   }
 
   get summaryRows() {
@@ -298,17 +410,6 @@ export default class SfiLauncher extends LightningElement {
   get searchPlaceholder() {
     const type = this.searchTypes.find((t) => t.value === this.searchType);
     return `Search ${type ? type.label : ""}`;
-  }
-
-  // ---- Shortcuts getters ----
-
-  get shortcutRows() {
-    return SETUP_SHORTCUTS.filter(
-      (s) =>
-        !this.shortcutFilter ||
-        containsIgnoreCase(s.label, this.shortcutFilter) ||
-        containsIgnoreCase(s.section, this.shortcutFilter)
-    );
   }
 
   // ---- Handlers ----
@@ -370,10 +471,6 @@ export default class SfiLauncher extends LightningElement {
     } finally {
       this.isSearching = false;
     }
-  }
-
-  handleShortcutFilter(event) {
-    this.shortcutFilter = event.target.value;
   }
 
   toast(title, message, variant) {
