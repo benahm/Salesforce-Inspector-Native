@@ -1,51 +1,28 @@
 import { LightningElement, wire } from "lwc";
 import { CurrentPageReference } from "lightning/navigation";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
-import getRecord from "@salesforce/apex/SFI_RecordService.getRecord";
-import getObjectInfo from "@salesforce/apex/SFI_DescribeService.getObjectInfo";
 import search from "@salesforce/apex/SFI_SearchService.search";
 import getUser from "@salesforce/apex/SFI_UserService.getUser";
 import searchUsers from "@salesforce/apex/SFI_UserService.searchUsers";
 import setDebugMode from "@salesforce/apex/SFI_UserService.setDebugMode";
 import {
-  containsIgnoreCase,
   copyToClipboard,
   dataExportUrl,
   dataImportUrl,
   debounce,
   highlight,
-  isSalesforceId,
-  OBJECT_SETUP_PAGES,
-  recordUrl,
-  objectSetupUrl,
   reduceErrors,
   showAllDataUrl,
   TOOL_SECTIONS,
   VERSION
 } from "c/sfiUtils";
 
-const SUMMARY_FIELDS = [
-  "RecordTypeId",
-  "OwnerId",
-  "CreatedById",
-  "CreatedDate",
-  "LastModifiedById",
-  "LastModifiedDate"
-];
-
 export default class SfiLauncher extends LightningElement {
   version = VERSION;
 
-  // Page context
+  // Page context, passed to the Objects tab and used to pre-fill tools
   recordId;
   objectApiName;
-  record;
-  objectInfo;
-  contextError;
-  isLoadingContext = false;
-
-  fieldFilter = "";
-  idInput = "";
 
   // Search tab
   searchType = "Object";
@@ -110,12 +87,11 @@ export default class SfiLauncher extends LightningElement {
   }
 
   get tabs() {
-    // Same order as Salesforce Inspector Reloaded, then the native extras.
     const tabs = [
       { value: "context", label: "Objects" },
-      { value: "users", label: "Users" },
       { value: "search", label: "Search" },
-      { value: "tools", label: "Tools", icon: "utility:apps" }
+      { value: "users", label: "Users" },
+      { value: "tools", label: "Tools", title: "Tools", icon: "utility:apps" }
     ];
     return tabs.map((tab) => ({
       ...tab,
@@ -136,14 +112,6 @@ export default class SfiLauncher extends LightningElement {
 
   get isToolsTab() {
     return this.activeTab === "tools";
-  }
-
-  get showAllDataUrl() {
-    return showAllDataUrl(this.record?.recordId);
-  }
-
-  get recordViewUrl() {
-    return recordUrl(this.record?.recordId);
   }
 
   // Tools receive the current object so they open pre-filled.
@@ -294,98 +262,6 @@ export default class SfiLauncher extends LightningElement {
     }
     this.recordId = recordId;
     this.objectApiName = objectApiName;
-    this.loadContext();
-  }
-
-  async loadContext() {
-    this.record = undefined;
-    this.objectInfo = undefined;
-    this.contextError = undefined;
-    if (!this.recordId && !this.objectApiName) {
-      return;
-    }
-    this.isLoadingContext = true;
-    try {
-      if (this.recordId) {
-        this.record = await getRecord({ recordId: this.recordId });
-        this.objectApiName = this.record.objectApiName;
-      } else {
-        this.objectInfo = await getObjectInfo({
-          objectApiName: this.objectApiName
-        });
-      }
-    } catch (error) {
-      this.contextError = reduceErrors(error);
-    } finally {
-      this.isLoadingContext = false;
-    }
-  }
-
-  // ---- Context getters ----
-
-  get hasRecord() {
-    return !!this.record;
-  }
-
-  get hasObjectOnly() {
-    return !this.record && !!this.objectInfo;
-  }
-
-  get hasNoContext() {
-    return !this.record && !this.objectInfo && !this.isLoadingContext;
-  }
-
-  get objectLabel() {
-    return this.record?.objectLabel || this.objectInfo?.label;
-  }
-
-  get recordTitle() {
-    return this.record?.recordName || this.record?.recordId;
-  }
-
-  get setupLinks() {
-    const objectApiName = this.objectApiName;
-    return [
-      ...OBJECT_SETUP_PAGES.map((p) => ({
-        key: p.page,
-        label: p.label,
-        url: objectSetupUrl(objectApiName, p.page)
-      })),
-      { key: "list", label: "List", url: `/lightning/o/${objectApiName}/list` }
-    ];
-  }
-
-  get summaryRows() {
-    if (!this.record) {
-      return [];
-    }
-    const byName = new Map(this.record.fields.map((f) => [f.name, f]));
-    return SUMMARY_FIELDS.filter(
-      (name) => byName.has(name) && byName.get(name).value
-    ).map((name) => {
-      const field = byName.get(name);
-      return {
-        name,
-        label: field.label,
-        value: field.value,
-        url: field.type === "REFERENCE" ? showAllDataUrl(field.value) : null
-      };
-    });
-  }
-
-  get fieldRows() {
-    if (!this.record) {
-      return [];
-    }
-    return this.record.fields
-      .filter(
-        (f) =>
-          !this.fieldFilter ||
-          containsIgnoreCase(f.label, this.fieldFilter) ||
-          containsIgnoreCase(f.name, this.fieldFilter) ||
-          containsIgnoreCase(f.value, this.fieldFilter)
-      )
-      .sort((a, b) => a.label.localeCompare(b.label));
   }
 
   // ---- Search getters ----
@@ -413,29 +289,6 @@ export default class SfiLauncher extends LightningElement {
   }
 
   // ---- Handlers ----
-
-  handleFieldFilter(event) {
-    this.fieldFilter = event.target.value;
-  }
-
-  handleIdInput(event) {
-    this.idInput = event.target.value;
-  }
-
-  handleIdKeyUp(event) {
-    if (event.key === "Enter") {
-      this.handleOpenId();
-    }
-  }
-
-  handleOpenId() {
-    const id = (this.idInput || "").trim();
-    if (!isSalesforceId(id)) {
-      this.toast("Invalid record Id", id, "error");
-      return;
-    }
-    window.open(showAllDataUrl(id), "_blank");
-  }
 
   async handleCopy(event) {
     const value = event.currentTarget.dataset.value;

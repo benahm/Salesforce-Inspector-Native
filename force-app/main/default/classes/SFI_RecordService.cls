@@ -15,6 +15,8 @@ public with sharing class SFI_RecordService {
     @AuraEnabled
     public Boolean updateable;
     @AuraEnabled
+    public Boolean createable;
+    @AuraEnabled
     public List<FieldValue> fields = new List<FieldValue>();
     @AuraEnabled
     public List<ChildRelationshipInfo> childRelationships = new List<ChildRelationshipInfo>();
@@ -87,6 +89,7 @@ public with sharing class SFI_RecordService {
       data.objectApiName = objectDescribe.getName();
       data.objectLabel = objectDescribe.getLabel();
       data.updateable = objectDescribe.isUpdateable();
+      data.createable = objectDescribe.isCreateable();
       for (Schema.DescribeFieldResult fieldDescribe : fieldDescribes) {
         FieldValue fieldValue = toFieldValue(fieldDescribe, record);
         // Person accounts expose several name fields: prefer Name when it is set.

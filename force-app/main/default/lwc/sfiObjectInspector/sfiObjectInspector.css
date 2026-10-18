@@ -1,0 +1,140 @@
+/* The tab content fills the launcher height; the last list scrolls. */
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.sfi-fill {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.sfi-mono {
+  font-family: "Consolas", "Monaco", monospace;
+  font-size: 0.75rem;
+}
+
+.sfi-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.25rem;
+}
+
+.sfi-chip,
+.sfi-small-button {
+  font-size: 0.75rem;
+  line-height: 1.5rem;
+  padding: 0 0.5rem;
+  margin: 0;
+}
+
+.sfi-chip {
+  font-family: "Consolas", "Monaco", monospace;
+}
+
+.sfi-card {
+  flex-shrink: 0;
+  margin-top: 0.5rem;
+}
+
+.sfi-card-header {
+  gap: 0.25rem;
+}
+
+.sfi-title {
+  font-weight: 700;
+}
+
+.sfi-segments {
+  flex-shrink: 0;
+}
+
+.sfi-segment {
+  white-space: nowrap;
+  font-size: 0.75rem;
+  padding: 0 0.5rem;
+}
+
+.sfi-toolbar {
+  flex-shrink: 0;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.sfi-table td {
+  padding: 0.125rem 0.5rem;
+  vertical-align: top;
+}
+
+.sfi-name {
+  width: 45%;
+}
+
+.sfi-value {
+  white-space: pre-wrap;
+  word-break: break-word;
+  cursor: copy;
+}
+
+.sfi-value:hover {
+  background: #f3f3f3;
+}
+
+.sfi-count {
+  width: 4.5rem;
+}
+
+.sfi-rel-links {
+  width: 6rem;
+  white-space: nowrap;
+}
+
+.sfi-rel-links a + a {
+  margin-left: 0.5rem;
+}
+
+.sfi-edit-form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.sfi-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.125rem 0;
+}
+
+.sfi-edit-name {
+  width: 45%;
+  flex-shrink: 0;
+}
+
+.sfi-edit-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.sfi-changed {
+  color: #0176d3;
+  margin-left: 0.25rem;
+}
+
+.sfi-edit-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  border-top: 1px solid #e5e5e5;
+}
+
+.sfi-spinner-holder {
+  position: relative;
+  min-height: 80px;
+}

@@ -10,17 +10,20 @@
               role="tab"
               href="#"
               aria-selected={tab.selected}
+              aria-label={tab.title}
+              title={tab.title}
               data-tab={tab.value}
               onclick={handleTab}
             >
               <template lwc:if={tab.icon}>
                 <lightning-icon
                   icon-name={tab.icon}
-                  size="xx-small"
-                  class="slds-m-right_xx-small sfi-tab-icon"
+                  size="x-small"
+                  alternative-text={tab.title}
+                  class="sfi-tab-icon"
                 ></lightning-icon>
               </template>
-              {tab.label}
+              <template lwc:else>{tab.label}</template>
             </a>
           </li>
         </template>
@@ -34,175 +37,12 @@
     </div>
 
     <div class="sfi-body">
-      <!-- Context tab: record, object or manual Id -->
+      <!-- Objects tab: inspector of the page record / object, or any searched one -->
       <template lwc:if={isContextTab}>
-        <template lwc:if={isLoadingContext}>
-          <div class="sfi-spinner-holder">
-            <lightning-spinner
-              alternative-text="Loading"
-              size="small"
-            ></lightning-spinner>
-          </div>
-        </template>
-
-        <template lwc:if={contextError}>
-          <div
-            class="slds-notify slds-notify_alert slds-alert_error slds-m-bottom_x-small"
-            role="alert"
-          >
-            {contextError}
-          </div>
-        </template>
-
-        <template lwc:if={hasRecord}>
-          <div
-            class="slds-grid slds-grid_vertical-align-start slds-m-bottom_x-small"
-          >
-            <div class="slds-col slds-truncate">
-              <p class="slds-text-title_caps slds-truncate">
-                {objectLabel} (<span class="sfi-mono">{objectApiName}</span>)
-              </p>
-              <p
-                class="slds-text-heading_small slds-truncate"
-                title={recordTitle}
-              >
-                {recordTitle}
-              </p>
-              <p>
-                <span class="sfi-mono">{record.recordId}</span>
-                <lightning-button-icon
-                  icon-name="utility:copy"
-                  variant="bare"
-                  size="small"
-                  alternative-text="Copy Id"
-                  title="Copy Id"
-                  data-value={record.recordId}
-                  onclick={handleCopy}
-                  class="slds-m-left_xx-small"
-                ></lightning-button-icon>
-              </p>
-            </div>
-            <div class="slds-no-flex">
-              <a
-                href={showAllDataUrl}
-                target="_blank"
-                class="slds-button slds-button_brand"
-                >Show All Data</a
-              >
-              <a
-                href={recordViewUrl}
-                target="_blank"
-                class="slds-button slds-button_neutral"
-                >Open record</a
-              >
-            </div>
-          </div>
-
-          <p class="slds-text-body_small slds-m-bottom_x-small sfi-links">
-            <span class="slds-text-color_weak">Links</span>
-            <template for:each={setupLinks} for:item="link">
-              <a key={link.key} href={link.url} target="_blank">{link.label}</a>
-            </template>
-          </p>
-
-          <div class="slds-grid slds-wrap slds-m-bottom_x-small sfi-summary">
-            <template for:each={summaryRows} for:item="row">
-              <div
-                key={row.name}
-                class="slds-size_1-of-2 slds-truncate slds-text-body_small slds-p-right_x-small"
-              >
-                <span class="slds-text-color_weak">{row.label}:</span>
-                <template lwc:if={row.url}>
-                  <a
-                    href={row.url}
-                    target="_blank"
-                    class="sfi-mono slds-m-left_xx-small"
-                    >{row.value}</a
-                  >
-                </template>
-                <template lwc:else>
-                  <span class="slds-m-left_xx-small">{row.value}</span>
-                </template>
-              </div>
-            </template>
-          </div>
-
-          <lightning-input
-            type="search"
-            variant="label-hidden"
-            placeholder="Filter fields by label, API name or value"
-            value={fieldFilter}
-            onchange={handleFieldFilter}
-          ></lightning-input>
-          <div class="sfi-fill slds-m-top_xx-small">
-            <table
-              class="slds-table slds-table_bordered slds-table_fixed-layout sfi-table"
-            >
-              <tbody>
-                <template for:each={fieldRows} for:item="field">
-                  <tr key={field.name}>
-                    <td
-                      class="slds-truncate sfi-field-name"
-                      title={field.label}
-                    >
-                      {field.label}<br />
-                      <span class="sfi-mono slds-text-color_weak"
-                        >{field.name}</span
-                      >
-                    </td>
-                    <td
-                      class="sfi-value"
-                      data-value={field.value}
-                      onclick={handleCopy}
-                      title="Click to copy"
-                    >
-                      {field.value}
-                    </td>
-                  </tr>
-                </template>
-              </tbody>
-            </table>
-          </div>
-        </template>
-
-        <template lwc:if={hasObjectOnly}>
-          <div class="slds-grid slds-grid_vertical-align-start">
-            <div class="slds-col slds-truncate">
-              <p class="slds-text-title_caps">Object</p>
-              <p class="slds-text-heading_small slds-m-bottom_x-small">
-                {objectLabel} (<span class="sfi-mono">{objectApiName}</span>)
-              </p>
-            </div>
-          </div>
-          <p class="slds-text-body_small slds-m-bottom_x-small sfi-links">
-            <span class="slds-text-color_weak">Links</span>
-            <template for:each={setupLinks} for:item="link">
-              <a key={link.key} href={link.url} target="_blank">{link.label}</a>
-            </template>
-          </p>
-        </template>
-
-        <template lwc:if={hasNoContext}>
-          <p class="slds-m-bottom_x-small slds-text-color_weak">
-            No record on this page. Paste a record Id to inspect it.
-          </p>
-          <div class="slds-grid">
-            <lightning-input
-              type="text"
-              variant="label-hidden"
-              placeholder="Record Id"
-              value={idInput}
-              onchange={handleIdInput}
-              onkeyup={handleIdKeyUp}
-              class="slds-col slds-m-right_x-small"
-            ></lightning-input>
-            <lightning-button
-              variant="brand"
-              label="Show All Data"
-              onclick={handleOpenId}
-            ></lightning-button>
-          </div>
-        </template>
+        <c-sfi-object-inspector
+          page-record-id={recordId}
+          page-object-api-name={objectApiName}
+        ></c-sfi-object-inspector>
       </template>
 
       <!-- Users tab (aligned on Salesforce Inspector Reloaded) -->
