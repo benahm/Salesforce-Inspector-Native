@@ -30,6 +30,17 @@ export const ORG_LIMITS_URL = "/lightning/cmp/c__sfiOrgLimits";
 
 export const EVENT_MONITOR_URL = "/lightning/cmp/c__sfiEventMonitor";
 
+export const LOGS_VIEWER_URL = "/lightning/cmp/c__sfiLogsViewer";
+
+// Setup > Debug Logs: trace flags (enable logs) and "Delete All"
+export const DEBUG_LOGS_SETUP_URL = "/lightning/setup/ApexDebugLogs/home";
+
+// The log body is not queryable with SOQL: it opens in the Setup log viewer.
+export function logDetailUrl(logId) {
+  const address = `/p/setup/layout/ApexDebugLogDetailEdit/d?apex_log_id=${logId}`;
+  return `/lightning/setup/ApexDebugLogs/page?address=${encodeURIComponent(address)}`;
+}
+
 export function recordUrl(recordId) {
   return `/lightning/r/${encodeURIComponent(recordId)}/view`;
 }
@@ -50,28 +61,26 @@ export const OBJECT_SETUP_PAGES = [
 ];
 
 /**
- * Tools listed in the launcher "+" tab. A tool without key is not built yet and
- * shows as "Soon": give it a key (and a url in the launcher) when it ships.
+ * Tools listed in the launcher Tools tab. A tool without key is not built yet
+ * and shows as "Soon": give it a key (and a url in the launcher) when it ships.
+ * Developer tools of Inspector Reloaded that need the Tooling or Metadata API
+ * (Field Creator, Download Metadata, REST Explorer...) are left to the CLI and
+ * AI agents: SF Inspector Native stays 100% native, without callouts.
  */
 export const TOOL_SECTIONS = [
   {
-    title: "Data & Metadata",
+    title: "Data",
     tools: [
       { label: "Data Export", key: "dataExport" },
-      { label: "Data Import", key: "dataImport" },
-      { label: "Logs Viewer" },
-      { label: "Field Creator" },
-      { label: "Download Metadata" },
-      { label: "Dependencies Explorer" }
+      { label: "Data Import", key: "dataImport" }
     ]
   },
   {
-    title: "Platform Tools",
+    title: "Monitoring",
     tools: [
-      { label: "REST Explorer" },
+      { label: "Logs Viewer", key: "logsViewer" },
       { label: "Event Monitor", key: "eventMonitor" },
-      { label: "Org Limits", key: "orgLimits" },
-      { label: "API Statistics" }
+      { label: "Org Limits", key: "orgLimits" }
     ]
   }
 ];

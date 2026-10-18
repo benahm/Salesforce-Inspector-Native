@@ -1,0 +1,18 @@
+.sfi-container {
+  position: relative;
+  min-height: 200px;
+}
+
+.sfi-actions {
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.sfi-filter {
+  width: 18rem;
+}
+
+.sfi-spinner-holder {
+  position: relative;
+  min-height: 80px;
+}

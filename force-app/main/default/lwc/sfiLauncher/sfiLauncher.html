@@ -171,17 +171,13 @@
                 >
               </div>
               <div class="slds-button-group" role="group">
-                <button
-                  class="slds-button slds-button_neutral sfi-soon"
-                  disabled
-                  title="Needs the Tooling API (TraceFlag): coming soon"
+                <a
+                  href={userLinks.debugLogs}
+                  target="_blank"
+                  class="slds-button slds-button_neutral"
+                  title="Setup > Debug Logs: add a trace flag for this user"
+                  >Enable Logs</a
                 >
-                  Enable Logs
-                  <span
-                    class="slds-badge slds-badge_lightest slds-m-left_xx-small"
-                    >Soon</span
-                  >
-                </button>
                 <button
                   class="slds-button slds-button_neutral"
                   disabled={isSavingUser}

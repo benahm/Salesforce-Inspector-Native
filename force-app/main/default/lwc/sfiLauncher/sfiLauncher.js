@@ -10,8 +10,10 @@ import {
   dataExportUrl,
   dataImportUrl,
   debounce,
+  DEBUG_LOGS_SETUP_URL,
   EVENT_MONITOR_URL,
   highlight,
+  LOGS_VIEWER_URL,
   ORG_LIMITS_URL,
   reduceErrors,
   showAllDataUrl,
@@ -125,6 +127,7 @@ export default class SfiLauncher extends LightningElement {
       ),
       dataImport: dataImportUrl(objectApiName),
       eventMonitor: EVENT_MONITOR_URL,
+      logsViewer: LOGS_VIEWER_URL,
       orgLimits: ORG_LIMITS_URL
     };
     return TOOL_SECTIONS.map((section) => ({
@@ -223,6 +226,7 @@ export default class SfiLauncher extends LightningElement {
       profile: `/lightning/setup/EnhancedProfiles/page?address=%2F${u.profileId}`,
       permissionSets: `/lightning/setup/PermSets/page?address=%2Fudd%2FPermissionSet%2FassignPermissionSet.apexp%3FuserId%3D${id}`,
       permissionSetGroups: `/lightning/setup/PermSetGroups/page?address=%2Fudd%2FPermissionSetGroup%2FassignPermissionSet.apexp%3FuserId%3D${id}%26isPermsetGroup%3D1`,
+      debugLogs: DEBUG_LOGS_SETUP_URL,
       loginAs: `/servlet/servlet.su?oid=${encodeURIComponent(u.orgId)}&suorgadminid=${id}&retURL=%2F&targetURL=%2F`
     };
   }

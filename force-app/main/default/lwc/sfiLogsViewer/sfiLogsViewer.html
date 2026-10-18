@@ -1,0 +1,96 @@
+<template>
+  <div class="slds-card sfi-container">
+    <div class="slds-page-header">
+      <div class="slds-page-header__row">
+        <div class="slds-page-header__col-title">
+          <div class="slds-media slds-media_center">
+            <div class="slds-media__figure">
+              <lightning-icon
+                icon-name="utility:file"
+                size="small"
+              ></lightning-icon>
+            </div>
+            <div class="slds-media__body">
+              <h1 class="slds-page-header__title">Logs Viewer</h1>
+            </div>
+          </div>
+        </div>
+        <div class="slds-page-header__col-actions">
+          <div class="slds-grid slds-grid_vertical-align-center sfi-actions">
+            <span class="slds-text-body_small slds-text-color_weak"
+              >{countLabel}</span
+            >
+            <lightning-input
+              type="toggle"
+              label="Only my logs"
+              checked={onlyMine}
+              onchange={handleOnlyMine}
+              message-toggle-active=""
+              message-toggle-inactive=""
+            ></lightning-input>
+            <lightning-input
+              type="search"
+              variant="label-hidden"
+              label="Filter"
+              placeholder="Filter by user, operation or status"
+              value={filter}
+              onchange={handleFilter}
+              class="sfi-filter"
+            ></lightning-input>
+            <lightning-button
+              label="Refresh"
+              icon-name="utility:refresh"
+              onclick={handleRefresh}
+            ></lightning-button>
+            <a
+              href={debugLogsUrl}
+              target="_blank"
+              class="slds-button slds-button_neutral"
+              title="Setup > Debug Logs: trace flags (enable logs) and Delete All"
+              >Debug Logs Setup</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <template lwc:if={error}>
+      <div
+        class="slds-notify slds-notify_alert slds-alert_error slds-m-around_small"
+        role="alert"
+      >
+        {error}
+      </div>
+    </template>
+
+    <template lwc:if={isLoading}>
+      <div class="sfi-spinner-holder">
+        <lightning-spinner
+          alternative-text="Loading"
+          size="medium"
+        ></lightning-spinner>
+      </div>
+    </template>
+
+    <template lwc:if={hasNoLogs}>
+      <p
+        class="slds-p-around_large slds-text-align_center slds-text-color_weak"
+      >
+        No debug logs. Enable logs for a user with a trace flag in Debug Logs
+        Setup.
+      </p>
+    </template>
+
+    <template lwc:else>
+      <lightning-datatable
+        key-field="id"
+        data={rows}
+        columns={columns}
+        hide-checkbox-column
+        sorted-by={sortedBy}
+        sorted-direction={sortedDirection}
+        onsort={handleSort}
+      ></lightning-datatable>
+    </template>
+  </div>
+</template>
