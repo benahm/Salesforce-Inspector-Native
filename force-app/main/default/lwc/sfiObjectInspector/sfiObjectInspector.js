@@ -5,14 +5,14 @@ import countChildren from "@salesforce/apex/SFI_RecordService.countChildren";
 import getObjectInfo from "@salesforce/apex/SFI_DescribeService.getObjectInfo";
 import getFields from "@salesforce/apex/SFI_DescribeService.getFields";
 import listObjects from "@salesforce/apex/SFI_DescribeService.listObjects";
+import SfiShowAllDataModal from "c/sfiShowAllDataModal";
 import {
   containsIgnoreCase,
   copyToClipboard,
   dataExportUrl,
   isSalesforceId,
   recordUrl,
-  reduceErrors,
-  showAllDataUrl
+  reduceErrors
 } from "c/sfiUtils";
 
 const MAX_OBJECT_MATCHES = 8;
@@ -256,8 +256,8 @@ export default class SfiObjectInspector extends LightningElement {
     return `/lightning/o/${this.objectApiName}/new`;
   }
 
-  get showAllDataUrl() {
-    return showAllDataUrl(this.record?.recordId);
+  handleShowAllData() {
+    SfiShowAllDataModal.show(this.record.recordId);
   }
 
   get recordViewUrl() {

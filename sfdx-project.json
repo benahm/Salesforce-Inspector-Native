@@ -1,12 +1,22 @@
 {
   "packageDirectories": [
     {
+      "versionName": "ver 0.1",
+      "versionNumber": "0.1.0.NEXT",
       "path": "force-app",
-      "default": true
+      "default": true,
+      "package": "SFI Native",
+      "versionDescription": ""
     }
   ],
   "name": "Salesforce Inspector Native",
-  "namespace": "",
+  "namespace": "sfinative",
   "sfdcLoginUrl": "https://login.salesforce.com",
-  "sourceApiVersion": "64.0"
+  "sourceApiVersion": "64.0",
+  "packageAliases": {
+    "SFI Native": "0Hog70000004etJCAQ",
+    "SFI Native@0.1.0-1": "04tg7000000b7s9AAA",
+    "SFI Native@0.1.0-2": "04tg7000000b89tAAA",
+    "SFI Native@0.1.0-3": "04tg7000000b8LBAAY"
+  }
 }

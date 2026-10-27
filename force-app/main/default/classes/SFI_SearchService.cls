@@ -33,9 +33,6 @@ public with sharing class SFI_SearchService {
         when 'Object' {
           return searchObjects(term);
         }
-        when 'CustomLabel' {
-          return searchCustomLabels(term);
-        }
         when 'ApexClass' {
           return searchApex('ApexClass', 'ApexClasses', term);
         }
@@ -88,26 +85,6 @@ public with sharing class SFI_SearchService {
       if (results.size() >= MAX_RESULTS) {
         break;
       }
-    }
-    return results;
-  }
-
-  private static List<SearchResult> searchCustomLabels(String term) {
-    String soql = 'SELECT Id, Name, Value, Category FROM ExternalString WHERE NamespacePrefix = null';
-    if (String.isNotBlank(term)) {
-      soql += ' AND (Name LIKE :likeTerm OR Value LIKE :likeTerm)';
-    }
-    soql += ' ORDER BY Name LIMIT ' + MAX_RESULTS;
-    List<SearchResult> results = new List<SearchResult>();
-    for (SObject row : query(soql, term)) {
-      results.add(
-        new SearchResult(
-          row.Id,
-          (String) row.get('Name'),
-          (String) row.get('Value'),
-          '/lightning/setup/ExternalStrings/page?address=%2F' + row.Id
-        )
-      );
     }
     return results;
   }

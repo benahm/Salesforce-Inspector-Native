@@ -5,16 +5,17 @@ import search from "@salesforce/apex/SFI_SearchService.search";
 import getUser from "@salesforce/apex/SFI_UserService.getUser";
 import searchUsers from "@salesforce/apex/SFI_UserService.searchUsers";
 import setDebugMode from "@salesforce/apex/SFI_UserService.setDebugMode";
+import SfiShowAllDataModal from "c/sfiShowAllDataModal";
 import {
   copyToClipboard,
   dataExportUrl,
   dataImportUrl,
   debounce,
   DEBUG_LOGS_SETUP_URL,
-  EVENT_MONITOR_URL,
+  eventMonitorUrl,
   highlight,
-  LOGS_VIEWER_URL,
-  ORG_LIMITS_URL,
+  logsViewerUrl,
+  orgLimitsUrl,
   reduceErrors,
   showAllDataUrl,
   TOOL_SECTIONS,
@@ -36,7 +37,6 @@ export default class SfiLauncher extends LightningElement {
   isSearching = false;
   searchTypes = [
     { label: "Objects", value: "Object" },
-    { label: "Custom Labels", value: "CustomLabel" },
     { label: "Apex Classes", value: "ApexClass" },
     { label: "Apex Triggers", value: "ApexTrigger" },
     { label: "Visualforce Pages", value: "ApexPage" },
@@ -126,9 +126,9 @@ export default class SfiLauncher extends LightningElement {
         objectApiName ? `SELECT Id FROM ${objectApiName} LIMIT 100` : null
       ),
       dataImport: dataImportUrl(objectApiName),
-      eventMonitor: EVENT_MONITOR_URL,
-      logsViewer: LOGS_VIEWER_URL,
-      orgLimits: ORG_LIMITS_URL
+      eventMonitor: eventMonitorUrl(),
+      logsViewer: logsViewerUrl(),
+      orgLimits: orgLimitsUrl()
     };
     return TOOL_SECTIONS.map((section) => ({
       ...section,
@@ -212,6 +212,11 @@ export default class SfiLauncher extends LightningElement {
     this.userResults = [];
     this.userSearch = "";
     this.loadUser(event.currentTarget.dataset.id);
+  }
+
+  handleUserShowAllData(event) {
+    event.preventDefault();
+    SfiShowAllDataModal.show(this.user.id);
   }
 
   get userLinks() {

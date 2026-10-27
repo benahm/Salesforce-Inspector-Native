@@ -43,6 +43,15 @@
         </div>
         <div class="slds-page-header__col-actions">
           <div class="slds-grid slds-grid_vertical-align-center">
+            <template lwc:if={canGoBack}>
+              <lightning-button-icon
+                icon-name="utility:back"
+                alternative-text="Back"
+                title="Back to the previous record"
+                onclick={handleBack}
+                class="slds-m-right_x-small"
+              ></lightning-button-icon>
+            </template>
             <lightning-input
               type="text"
               variant="label-hidden"
@@ -78,6 +87,11 @@
               <a href={objectSetupUrl} target="_blank" class="slds-m-left_small"
                 >Object Manager</a
               >
+              <template lwc:if={inModal}>
+                <a href={tabUrl} target="_blank" class="slds-m-left_small"
+                  >Open in tab</a
+                >
+              </template>
             </template>
           </div>
         </div>
@@ -224,6 +238,8 @@
                       <template lwc:if={field.isReference}>
                         <a
                           href={field.referenceUrl}
+                          data-id={field.value}
+                          onclick={handleReferenceClick}
                           class="sfi-mono"
                           title="Show all data of this record"
                           >{field.value}</a

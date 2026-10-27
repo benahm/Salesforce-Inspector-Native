@@ -75,13 +75,13 @@
           >
         </div>
         <template lwc:if={hasRecord}>
-          <a
-            href={showAllDataUrl}
-            target="_blank"
+          <button
             class="slds-button slds-button_brand sfi-small-button"
-            title="Show all data in a new tab"
-            >Show All Data</a
+            title="Show all data"
+            onclick={handleShowAllData}
           >
+            Show All Data
+          </button>
           <a
             href={recordViewUrl}
             target="_blank"

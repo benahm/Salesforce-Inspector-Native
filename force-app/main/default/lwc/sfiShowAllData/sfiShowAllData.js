@@ -27,6 +27,10 @@ export default class SfiShowAllData extends LightningElement {
   counts = {};
   loadedId;
   _recordId;
+  // In a modal, reference links open in place: previous record Ids for "Back"
+  history = [];
+
+  @api inModal = false;
 
   @api
   get recordId() {
@@ -41,6 +45,9 @@ export default class SfiShowAllData extends LightningElement {
 
   @wire(CurrentPageReference)
   handlePageReference(pageReference) {
+    if (this.inModal) {
+      return;
+    }
     const stateId = pageReference?.state?.c__recordId;
     if (stateId && stateId !== this.loadedId) {
       this.load(stateId);
@@ -80,6 +87,14 @@ export default class SfiShowAllData extends LightningElement {
 
   get recordUrl() {
     return recordUrl(this.data?.recordId);
+  }
+
+  get tabUrl() {
+    return showAllDataUrl(this.loadedId);
+  }
+
+  get canGoBack() {
+    return this.history.length > 0;
   }
 
   get objectSetupUrl() {
@@ -200,6 +215,21 @@ export default class SfiShowAllData extends LightningElement {
       return;
     }
     this.load(id);
+  }
+
+  handleReferenceClick(event) {
+    if (!this.inModal) {
+      return;
+    }
+    event.preventDefault();
+    this.history = [...this.history, this.loadedId];
+    this.load(event.currentTarget.dataset.id);
+  }
+
+  handleBack() {
+    const previousId = this.history[this.history.length - 1];
+    this.history = this.history.slice(0, -1);
+    this.load(previousId);
   }
 
   handleFilter(event) {

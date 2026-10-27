@@ -2,6 +2,8 @@
  * Shared helpers for SF Inspector Native components.
  */
 
+import NAMESPACE_MARKER_URL from "@salesforce/resourceUrl/sfiNamespace";
+
 export const VERSION = "0.1.0";
 
 const ID_PATTERN = /^[a-zA-Z0-9]{15}([a-zA-Z0-9]{3})?$/;
@@ -10,27 +12,42 @@ export function isSalesforceId(value) {
   return ID_PATTERN.test((value || "").trim());
 }
 
+// Component URLs carry the namespace: "c" when deployed unpackaged, "sfinative"
+// once installed from the package, where the resource URL ends with "sfinative__sfiNamespace".
+const namespace =
+  /\/(\w+?)__sfiNamespace/.exec(NAMESPACE_MARKER_URL)?.[1] || "c";
+
+function componentUrl(name, params = {}) {
+  const query = Object.entries(params)
+    .filter(([, value]) => value)
+    .map(([key, value]) => `c__${key}=${encodeURIComponent(value)}`)
+    .join("&");
+  return `/lightning/cmp/${namespace}__${name}${query ? "?" + query : ""}`;
+}
+
 export function showAllDataUrl(recordId) {
-  return `/lightning/cmp/c__sfiShowAllData?c__recordId=${encodeURIComponent(recordId)}`;
+  return componentUrl("sfiShowAllData", { recordId });
 }
 
 export function dataExportUrl(query) {
-  return query
-    ? `/lightning/cmp/c__sfiDataExport?c__query=${encodeURIComponent(query)}`
-    : "/lightning/cmp/c__sfiDataExport";
+  return componentUrl("sfiDataExport", { query });
 }
 
 export function dataImportUrl(objectApiName) {
-  return objectApiName
-    ? `/lightning/cmp/c__sfiDataImport?c__object=${encodeURIComponent(objectApiName)}`
-    : "/lightning/cmp/c__sfiDataImport";
+  return componentUrl("sfiDataImport", { object: objectApiName });
 }
 
-export const ORG_LIMITS_URL = "/lightning/cmp/c__sfiOrgLimits";
+export function orgLimitsUrl() {
+  return componentUrl("sfiOrgLimits");
+}
 
-export const EVENT_MONITOR_URL = "/lightning/cmp/c__sfiEventMonitor";
+export function eventMonitorUrl() {
+  return componentUrl("sfiEventMonitor");
+}
 
-export const LOGS_VIEWER_URL = "/lightning/cmp/c__sfiLogsViewer";
+export function logsViewerUrl() {
+  return componentUrl("sfiLogsViewer");
+}
 
 // Setup > Debug Logs: trace flags (enable logs) and "Delete All"
 export const DEBUG_LOGS_SETUP_URL = "/lightning/setup/ApexDebugLogs/home";

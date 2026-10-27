@@ -13,21 +13,24 @@ private class SFI_SearchServiceTest {
     Assert.isTrue(found, 'Account should be found');
   }
 
+  // The search lists unpackaged code only: once packaged, this class has a namespace.
   @IsTest
-  static void searchApexFindsThisClass() {
+  static void searchApexFindsThisClassWhenUnpackaged() {
+    Boolean isPackaged = SFI_SearchServiceTest.class.getName().contains('.');
     List<SFI_SearchService.SearchResult> results = SFI_SearchService.search(
       'ApexClass',
       'SFI_SearchServiceTest'
     );
-    Assert.areEqual(1, results.size());
-    Assert.isTrue(results[0].url.startsWith('/lightning/setup/ApexClasses/'));
+    Assert.areEqual(isPackaged ? 0 : 1, results.size());
+    for (SFI_SearchService.SearchResult result : results) {
+      Assert.isTrue(result.url.startsWith('/lightning/setup/ApexClasses/'));
+    }
   }
 
   @IsTest
   static void searchSupportsEveryMetadataType() {
     for (
       String metadataType : new List<String>{
-        'CustomLabel',
         'ApexTrigger',
         'ApexPage',
         'Flow'
