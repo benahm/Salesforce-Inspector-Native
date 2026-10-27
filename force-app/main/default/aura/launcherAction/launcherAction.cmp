@@ -1,5 +1,5 @@
 <!-- Global Action entry point: a Global Action cannot host a LWC directly. -->
-<aura:component implements="force:lightningQuickAction" access="global">
+<aura:component implements="force:lightningQuickAction" access="public">
   <div class="sfi-launcher-action">
     <c:launcher />
   </div>

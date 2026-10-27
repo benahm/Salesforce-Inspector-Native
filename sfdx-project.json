@@ -3,6 +3,7 @@
     {
       "versionName": "ver 0.1",
       "versionNumber": "0.1.0.NEXT",
+      "ancestorVersion": "HIGHEST",
       "path": "force-app",
       "default": true,
       "package": "SF Inspector Native",
