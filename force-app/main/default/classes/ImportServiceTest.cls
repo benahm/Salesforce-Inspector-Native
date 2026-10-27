@@ -1,12 +1,12 @@
 @IsTest
-private class SFI_ImportServiceTest {
-  private static List<SFI_ImportService.RowResult> run(
+private class ImportServiceTest {
+  private static List<ImportService.RowResult> run(
     String operation,
     String externalIdField,
     List<Map<String, String>> rows,
     Boolean validateOnly
   ) {
-    return SFI_ImportService.importBatch(
+    return ImportService.importBatch(
       'Contact',
       operation,
       externalIdField,
@@ -19,7 +19,7 @@ private class SFI_ImportServiceTest {
 
   @IsTest
   static void insertReportsSuccessAndErrorsPerRow() {
-    List<SFI_ImportService.RowResult> results = run(
+    List<ImportService.RowResult> results = run(
       'insert',
       null,
       new List<Map<String, String>>{
@@ -45,7 +45,7 @@ private class SFI_ImportServiceTest {
 
   @IsTest
   static void validateOnlyRollsBack() {
-    List<SFI_ImportService.RowResult> results = run(
+    List<ImportService.RowResult> results = run(
       'insert',
       null,
       new List<Map<String, String>>{
@@ -61,7 +61,7 @@ private class SFI_ImportServiceTest {
   static void updateSkipsEmptyValuesAndRequiresId() {
     Contact contact = new Contact(LastName = 'SFI Update', Title = 'Keep me');
     insert contact;
-    List<SFI_ImportService.RowResult> results = run(
+    List<ImportService.RowResult> results = run(
       'update',
       null,
       new List<Map<String, String>>{
@@ -89,7 +89,7 @@ private class SFI_ImportServiceTest {
   static void upsertAndDelete() {
     Contact contact = new Contact(LastName = 'SFI Upsert');
     insert contact;
-    List<SFI_ImportService.RowResult> upserted = run(
+    List<ImportService.RowResult> upserted = run(
       'upsert',
       'Id',
       new List<Map<String, String>>{
@@ -103,7 +103,7 @@ private class SFI_ImportServiceTest {
     Assert.isTrue(upserted[0].success, '' + upserted[0].error);
     Assert.isFalse(upserted[0].created);
 
-    List<SFI_ImportService.RowResult> deleted = run(
+    List<ImportService.RowResult> deleted = run(
       'delete',
       null,
       new List<Map<String, String>>{
@@ -131,9 +131,7 @@ private class SFI_ImportServiceTest {
   static void getImportFieldsFlagsRequiredFields() {
     Boolean lastNameRequired = false;
     for (
-      SFI_ImportService.ImportField field : SFI_ImportService.getImportFields(
-        'Contact'
-      )
+      ImportService.ImportField field : ImportService.getImportFields('Contact')
     ) {
       if (field.name == 'LastName') {
         lastNameRequired = field.requiredOnCreate;
@@ -146,11 +144,11 @@ private class SFI_ImportServiceTest {
   static void convertHandlesTypes() {
     Assert.areEqual(
       true,
-      SFI_ImportService.convert('yes', Contact.DoNotCall.getDescribe())
+      ImportService.convert('yes', Contact.DoNotCall.getDescribe())
     );
     Assert.areEqual(
       Date.newInstance(1990, 5, 17),
-      SFI_ImportService.convert('1990-05-17', Contact.Birthdate.getDescribe())
+      ImportService.convert('1990-05-17', Contact.Birthdate.getDescribe())
     );
   }
 }

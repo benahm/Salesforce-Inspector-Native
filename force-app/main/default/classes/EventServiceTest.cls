@@ -1,8 +1,8 @@
 @IsTest
-private class SFI_EventServiceTest {
+private class EventServiceTest {
   @IsTest
   static void getChannelsListsStandardEvents() {
-    List<SFI_EventService.Channel> channels = SFI_EventService.getChannels(
+    List<EventService.Channel> channels = EventService.getChannels(
       'standardPlatformEvent'
     );
     Assert.isFalse(channels.isEmpty(), 'Standard events should be listed');
@@ -11,7 +11,7 @@ private class SFI_EventServiceTest {
 
   @IsTest
   static void getChannelsStartsChangeEventsWithAll() {
-    List<SFI_EventService.Channel> channels = SFI_EventService.getChannels(
+    List<EventService.Channel> channels = EventService.getChannels(
       'changeEvent'
     );
     Assert.areEqual('/data/ChangeEvents', channels[0].path);
@@ -20,9 +20,7 @@ private class SFI_EventServiceTest {
   @IsTest
   static void getChannelsAcceptsCustomEvents() {
     for (
-      SFI_EventService.Channel channel : SFI_EventService.getChannels(
-        'platformEvent'
-      )
+      EventService.Channel channel : EventService.getChannels('platformEvent')
     ) {
       Assert.isTrue(channel.path.endsWith('__e'));
     }
@@ -31,7 +29,7 @@ private class SFI_EventServiceTest {
   @IsTest
   static void getChannelsRejectsUnknownType() {
     try {
-      SFI_EventService.getChannels('nope');
+      EventService.getChannels('nope');
       Assert.fail('An exception was expected');
     } catch (AuraHandledException e) {
       Assert.isTrue(e.getMessage().contains('nope'));

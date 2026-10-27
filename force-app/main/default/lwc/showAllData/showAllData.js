@@ -1,8 +1,8 @@
 import { LightningElement, api, wire } from "lwc";
 import { CurrentPageReference } from "lightning/navigation";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
-import getRecord from "@salesforce/apex/SFI_RecordService.getRecord";
-import countChildren from "@salesforce/apex/SFI_RecordService.countChildren";
+import getRecord from "@salesforce/apex/RecordService.getRecord";
+import countChildren from "@salesforce/apex/RecordService.countChildren";
 import {
   containsIgnoreCase,
   copyToClipboard,

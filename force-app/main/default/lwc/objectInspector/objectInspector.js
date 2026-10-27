@@ -1,10 +1,10 @@
 import { LightningElement, api } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
-import getRecord from "@salesforce/apex/SFI_RecordService.getRecord";
-import countChildren from "@salesforce/apex/SFI_RecordService.countChildren";
-import getObjectInfo from "@salesforce/apex/SFI_DescribeService.getObjectInfo";
-import getFields from "@salesforce/apex/SFI_DescribeService.getFields";
-import listObjects from "@salesforce/apex/SFI_DescribeService.listObjects";
+import getRecord from "@salesforce/apex/RecordService.getRecord";
+import countChildren from "@salesforce/apex/RecordService.countChildren";
+import getObjectInfo from "@salesforce/apex/DescribeService.getObjectInfo";
+import getFields from "@salesforce/apex/DescribeService.getFields";
+import listObjects from "@salesforce/apex/DescribeService.listObjects";
 import ShowAllDataModal from "c/showAllDataModal";
 import {
   containsIgnoreCase,

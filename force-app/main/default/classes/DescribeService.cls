@@ -1,7 +1,7 @@
 /**
  * Schema helpers shared by SF Inspector Native modules.
  */
-public with sharing class SFI_DescribeService {
+public with sharing class DescribeService {
   public class ObjectInfo {
     @AuraEnabled
     public String name;
@@ -44,7 +44,7 @@ public with sharing class SFI_DescribeService {
       ? null
       : Schema.getGlobalDescribe().get(objectApiName);
     if (sObjectType == null) {
-      throw new SFI_Exception('Unknown object: ' + objectApiName);
+      throw new InspectorException('Unknown object: ' + objectApiName);
     }
     return sObjectType.getDescribe(SObjectDescribeOptions.DEFERRED);
   }
@@ -54,7 +54,7 @@ public with sharing class SFI_DescribeService {
     try {
       return new ObjectInfo(describe(objectApiName));
     } catch (Exception e) {
-      throw SFI_Exception.toAura(e);
+      throw InspectorException.toAura(e);
     }
   }
 
@@ -77,7 +77,7 @@ public with sharing class SFI_DescribeService {
       }
       return result;
     } catch (Exception e) {
-      throw SFI_Exception.toAura(e);
+      throw InspectorException.toAura(e);
     }
   }
 
@@ -109,7 +109,7 @@ public with sharing class SFI_DescribeService {
       }
       return result;
     } catch (Exception e) {
-      throw SFI_Exception.toAura(e);
+      throw InspectorException.toAura(e);
     }
   }
 }

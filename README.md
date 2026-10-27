@@ -41,7 +41,7 @@ Take the package version Id (`04t…`) from the latest [release](https://github.
 
 ```bash
 sf package install --package <04t id> --target-org <alias> --wait 10
-sf org assign permset --name sfinative__SFI_Inspector_Admin --target-org <alias>
+sf org assign permset --name sfinative__Admin --target-org <alias>
 ```
 
 Open the **SF Inspector Setup** tab, **Add** the global action, and give access to other users from the same tab. See

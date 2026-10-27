@@ -1,5 +1,5 @@
 import { LightningElement } from "lwc";
-import getLogs from "@salesforce/apex/SFI_LogService.getLogs";
+import getLogs from "@salesforce/apex/LogService.getLogs";
 import {
   containsIgnoreCase,
   DEBUG_LOGS_SETUP_URL,

@@ -1,8 +1,8 @@
 import { LightningElement } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
-import getStatus from "@salesforce/apex/SFI_SetupService.getStatus";
-import addGlobalAction from "@salesforce/apex/SFI_SetupService.addGlobalAction";
-import removeGlobalAction from "@salesforce/apex/SFI_SetupService.removeGlobalAction";
+import getStatus from "@salesforce/apex/SetupService.getStatus";
+import addGlobalAction from "@salesforce/apex/SetupService.addGlobalAction";
+import removeGlobalAction from "@salesforce/apex/SetupService.removeGlobalAction";
 import ASSETS_URL from "@salesforce/resourceUrl/assets";
 import { RELEASES_URL, VERSION, reduceErrors } from "c/utils";
 

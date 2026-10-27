@@ -2,7 +2,7 @@
  * Runs read-only SOQL queries for Data Export.
  * Queries run in USER_MODE: the user only gets rows and fields they can already see.
  */
-public with sharing class SFI_QueryService {
+public with sharing class QueryService {
   public static final Integer MAX_ROWS_LIMIT = 10000;
   // Stop reading before serialization can exhaust the synchronous heap.
   private static final Decimal HEAP_RATIO = 0.4;
@@ -53,7 +53,7 @@ public with sharing class SFI_QueryService {
       result.elapsedMs = System.currentTimeMillis() - start;
       return result;
     } catch (Exception e) {
-      throw SFI_Exception.toAura(e);
+      throw InspectorException.toAura(e);
     }
   }
 
@@ -61,7 +61,7 @@ public with sharing class SFI_QueryService {
     String query = soql == null ? '' : soql.trim();
     query = query.removeEnd(';').trim();
     if (!query.toUpperCase().startsWith('SELECT')) {
-      throw new SFI_Exception('Only SELECT queries are allowed.');
+      throw new InspectorException('Only SELECT queries are allowed.');
     }
     return query;
   }

@@ -1,7 +1,7 @@
 import LightningModal from "lightning/modal";
-import findUsers from "@salesforce/apex/SFI_AccessService.findUsers";
-import findUsersByLogin from "@salesforce/apex/SFI_AccessService.findUsersByLogin";
-import getProfiles from "@salesforce/apex/SFI_AccessService.getProfiles";
+import findUsers from "@salesforce/apex/AccessService.findUsers";
+import findUsersByLogin from "@salesforce/apex/AccessService.findUsersByLogin";
+import getProfiles from "@salesforce/apex/AccessService.getProfiles";
 import { debounce, mergeSelection, parseLogins, reduceErrors } from "c/utils";
 
 const MAX_USERS = 200;

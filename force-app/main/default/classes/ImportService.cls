@@ -3,7 +3,7 @@
  * DML runs in USER_MODE with allOrNone=false: each row succeeds or fails on its own,
  * within the running user's CRUD, FLS and sharing.
  */
-public with sharing class SFI_ImportService {
+public with sharing class ImportService {
   public static final Integer MAX_BATCH_SIZE = 2000;
   private static final Set<String> OPERATIONS = new Set<String>{
     'insert',
@@ -55,7 +55,7 @@ public with sharing class SFI_ImportService {
     try {
       List<ImportField> result = new List<ImportField>();
       for (
-        Schema.SObjectField field : SFI_DescribeService.describe(objectApiName)
+        Schema.SObjectField field : DescribeService.describe(objectApiName)
           .fields.getMap()
           .values()
       ) {
@@ -79,7 +79,7 @@ public with sharing class SFI_ImportService {
       }
       return result;
     } catch (Exception e) {
-      throw SFI_Exception.toAura(e);
+      throw InspectorException.toAura(e);
     }
   }
 
@@ -101,17 +101,17 @@ public with sharing class SFI_ImportService {
     try {
       String op = operation == null ? '' : operation.toLowerCase();
       if (!OPERATIONS.contains(op)) {
-        throw new SFI_Exception('Unsupported operation: ' + operation);
+        throw new InspectorException('Unsupported operation: ' + operation);
       }
       if (rows == null || rows.isEmpty()) {
         return new List<RowResult>();
       }
       if (rows.size() > MAX_BATCH_SIZE) {
-        throw new SFI_Exception(
+        throw new InspectorException(
           'A batch cannot exceed ' + MAX_BATCH_SIZE + ' rows.'
         );
       }
-      Schema.DescribeSObjectResult objectDescribe = SFI_DescribeService.describe(
+      Schema.DescribeSObjectResult objectDescribe = DescribeService.describe(
         objectApiName
       );
       Integer offset = firstIndex == null ? 0 : firstIndex;
@@ -138,7 +138,7 @@ public with sharing class SFI_ImportService {
       }
       return results;
     } catch (Exception e) {
-      throw SFI_Exception.toAura(e);
+      throw InspectorException.toAura(e);
     }
   }
 
@@ -189,7 +189,7 @@ public with sharing class SFI_ImportService {
         ? null
         : fieldMap.get(externalIdField);
       if (upsertKey == null) {
-        throw new SFI_Exception('Choose an external Id field for upsert.');
+        throw new InspectorException('Choose an external Id field for upsert.');
       }
     }
 
@@ -271,7 +271,7 @@ public with sharing class SFI_ImportService {
     for (String fieldName : row.keySet()) {
       Schema.SObjectField field = fieldMap.get(fieldName);
       if (field == null) {
-        throw new SFI_Exception('Unknown field: ' + fieldName);
+        throw new InspectorException('Unknown field: ' + fieldName);
       }
       String value = row.get(fieldName);
       Boolean isEmpty = String.isBlank(value);
@@ -288,7 +288,7 @@ public with sharing class SFI_ImportService {
       record.put(d.getName(), isEmpty ? null : convert(value, d));
     }
     if (op == 'update' && record.get('Id') == null) {
-      throw new SFI_Exception('Id is required for update.');
+      throw new InspectorException('Id is required for update.');
     }
     return record;
   }
@@ -306,7 +306,7 @@ public with sharing class SFI_ImportService {
           if (new Set<String>{ 'false', '0', 'no', 'n' }.contains(lower)) {
             return false;
           }
-          throw new SFI_Exception('not a boolean');
+          throw new InspectorException('not a boolean');
         }
         when INTEGER {
           return Integer.valueOf(value);
@@ -340,7 +340,7 @@ public with sharing class SFI_ImportService {
         }
       }
     } catch (Exception e) {
-      throw new SFI_Exception(
+      throw new InspectorException(
         'Invalid ' +
           d.getType().name().toLowerCase() +
           ' for ' +

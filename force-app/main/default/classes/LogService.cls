@@ -2,7 +2,7 @@
  * Logs Viewer tool: lists debug logs with SOQL. The log body is not queryable,
  * so it opens in the standard Setup viewer.
  */
-public with sharing class SFI_LogService {
+public with sharing class LogService {
   private static final Integer DEFAULT_ROWS = 200;
   private static final Integer MAX_ROWS = 1000;
 
@@ -71,7 +71,7 @@ public with sharing class SFI_LogService {
       }
       return result;
     } catch (Exception e) {
-      throw SFI_Exception.toAura(e);
+      throw InspectorException.toAura(e);
     }
   }
 }

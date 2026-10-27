@@ -1,5 +1,5 @@
 @IsTest
-private class SFI_RecordServiceTest {
+private class RecordServiceTest {
   @TestSetup
   static void setup() {
     Account account = new Account(Name = 'SFI Test Account');
@@ -12,13 +12,13 @@ private class SFI_RecordServiceTest {
     Account account = [SELECT Id FROM Account LIMIT 1];
 
     Test.startTest();
-    SFI_RecordService.RecordData data = SFI_RecordService.getRecord(account.Id);
+    RecordService.RecordData data = RecordService.getRecord(account.Id);
     Test.stopTest();
 
     Assert.areEqual('Account', data.objectApiName);
     Assert.areEqual('SFI Test Account', data.recordName);
     Boolean hasIdField = false;
-    for (SFI_RecordService.FieldValue field : data.fields) {
+    for (RecordService.FieldValue field : data.fields) {
       if (field.name == 'Id') {
         hasIdField = true;
         Assert.areEqual(String.valueOf(account.Id), field.value);
@@ -27,7 +27,7 @@ private class SFI_RecordServiceTest {
     Assert.isTrue(hasIdField, 'Id field should be returned');
     Boolean hasContacts = false;
     for (
-      SFI_RecordService.ChildRelationshipInfo relationship : data.childRelationships
+      RecordService.ChildRelationshipInfo relationship : data.childRelationships
     ) {
       hasContacts = hasContacts || relationship.relationshipName == 'Contacts';
     }
@@ -37,7 +37,7 @@ private class SFI_RecordServiceTest {
   @IsTest
   static void getRecordRejectsInvalidId() {
     try {
-      SFI_RecordService.getRecord('not-an-id');
+      RecordService.getRecord('not-an-id');
       Assert.fail('An exception was expected');
     } catch (AuraHandledException e) {
       Assert.isTrue(
@@ -52,7 +52,7 @@ private class SFI_RecordServiceTest {
     Account account = [SELECT Id FROM Account LIMIT 1];
     Assert.areEqual(
       1,
-      SFI_RecordService.countChildren(account.Id, 'Contact', 'AccountId')
+      RecordService.countChildren(account.Id, 'Contact', 'AccountId')
     );
   }
 
@@ -60,7 +60,7 @@ private class SFI_RecordServiceTest {
   static void countChildrenRejectsUnknownField() {
     Account account = [SELECT Id FROM Account LIMIT 1];
     try {
-      SFI_RecordService.countChildren(account.Id, 'Contact', 'Nope__c');
+      RecordService.countChildren(account.Id, 'Contact', 'Nope__c');
       Assert.fail('An exception was expected');
     } catch (AuraHandledException e) {
       Assert.isTrue(e.getMessage().contains('Unknown field'), e.getMessage());

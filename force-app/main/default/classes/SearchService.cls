@@ -1,7 +1,7 @@
 /**
  * Searches objects and setup metadata from the launcher.
  */
-public with sharing class SFI_SearchService {
+public with sharing class SearchService {
   private static final Integer MAX_RESULTS = 25;
 
   public class SearchResult {
@@ -46,11 +46,13 @@ public with sharing class SFI_SearchService {
           return searchFlows(term);
         }
         when else {
-          throw new SFI_Exception('Unsupported metadata type: ' + metadataType);
+          throw new InspectorException(
+            'Unsupported metadata type: ' + metadataType
+          );
         }
       }
     } catch (Exception e) {
-      throw SFI_Exception.toAura(e);
+      throw InspectorException.toAura(e);
     }
   }
 

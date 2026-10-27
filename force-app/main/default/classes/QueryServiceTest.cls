@@ -1,5 +1,5 @@
 @IsTest
-private class SFI_QueryServiceTest {
+private class QueryServiceTest {
   @TestSetup
   static void setup() {
     Account account = new Account(Name = 'SFI Query Account');
@@ -12,7 +12,7 @@ private class SFI_QueryServiceTest {
 
   @IsTest
   static void runQueryReturnsRecordsWithRelationships() {
-    SFI_QueryService.QueryResult result = SFI_QueryService.runQuery(
+    QueryService.QueryResult result = QueryService.runQuery(
       'SELECT Id, LastName, Account.Name FROM Contact ORDER BY LastName;',
       2000
     );
@@ -29,7 +29,7 @@ private class SFI_QueryServiceTest {
 
   @IsTest
   static void runQueryStopsAtMaxRows() {
-    SFI_QueryService.QueryResult result = SFI_QueryService.runQuery(
+    QueryService.QueryResult result = QueryService.runQuery(
       'SELECT Id FROM Contact',
       1
     );
@@ -39,13 +39,13 @@ private class SFI_QueryServiceTest {
 
   @IsTest
   static void runQuerySupportsCountAndAggregates() {
-    SFI_QueryService.QueryResult countResult = SFI_QueryService.runQuery(
+    QueryService.QueryResult countResult = QueryService.runQuery(
       'SELECT COUNT() FROM Contact',
       null
     );
     Assert.areEqual(2, countResult.count);
 
-    SFI_QueryService.QueryResult aggregate = SFI_QueryService.runQuery(
+    QueryService.QueryResult aggregate = QueryService.runQuery(
       'SELECT AccountId, COUNT(Id) total FROM Contact GROUP BY AccountId',
       2000
     );
@@ -55,7 +55,7 @@ private class SFI_QueryServiceTest {
   @IsTest
   static void runQueryRejectsNonSelect() {
     try {
-      SFI_QueryService.runQuery('DELETE FROM Contact', 10);
+      QueryService.runQuery('DELETE FROM Contact', 10);
       Assert.fail('An exception was expected');
     } catch (AuraHandledException e) {
       Assert.isTrue(e.getMessage().contains('Only SELECT'), e.getMessage());
@@ -65,7 +65,7 @@ private class SFI_QueryServiceTest {
   @IsTest
   static void runQueryReportsInvalidSoql() {
     try {
-      SFI_QueryService.runQuery('SELECT Nope__c FROM Contact', 10);
+      QueryService.runQuery('SELECT Nope__c FROM Contact', 10);
       Assert.fail('An exception was expected');
     } catch (AuraHandledException e) {
       Assert.isTrue(e.getMessage().contains('Nope__c'), e.getMessage());

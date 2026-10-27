@@ -1,5 +1,5 @@
 @IsTest
-private class SFI_AccessServiceTest {
+private class AccessServiceTest {
   private static List<User> newStandardUsers(Integer count) {
     Id profileId = [SELECT Id FROM Profile WHERE Name = 'Standard User'].Id;
     Long stamp = Datetime.now().getTime();
@@ -31,11 +31,11 @@ private class SFI_AccessServiceTest {
     return ids;
   }
 
-  private static SFI_AccessService.AccessRow rowOf(
-    List<SFI_AccessService.AccessRow> rows,
+  private static AccessService.AccessRow rowOf(
+    List<AccessService.AccessRow> rows,
     Id userId
   ) {
-    for (SFI_AccessService.AccessRow row : rows) {
+    for (AccessService.AccessRow row : rows) {
       if (row.userId == userId) {
         return row;
       }
@@ -50,8 +50,8 @@ private class SFI_AccessServiceTest {
       WHERE
         AssigneeId IN :users
         AND PermissionSet.Name IN (
-          :SFI_AccessService.USER_PERMISSION_SET,
-          :SFI_AccessService.ADMIN_PERMISSION_SET
+          :AccessService.USER_PERMISSION_SET,
+          :AccessService.ADMIN_PERMISSION_SET
         )
     ];
   }
@@ -60,7 +60,7 @@ private class SFI_AccessServiceTest {
   static void setAccessGivesChangesAndRemovesManyUsersAtOnce() {
     List<User> users = newStandardUsers(3);
 
-    SFI_AccessService.AccessList accessList = SFI_AccessService.setAccess(
+    AccessService.AccessList accessList = AccessService.setAccess(
       idsOf(users),
       'User'
     );
@@ -69,11 +69,11 @@ private class SFI_AccessServiceTest {
       Assert.areEqual('User', rowOf(accessList.rows, u.Id).level);
     }
 
-    accessList = SFI_AccessService.setAccess(idsOf(users), 'Admin');
+    accessList = AccessService.setAccess(idsOf(users), 'Admin');
     Assert.areEqual('Admin', rowOf(accessList.rows, users[0].Id).level);
     Assert.areEqual(3, assignmentCount(users), 'Admin replaces User');
 
-    accessList = SFI_AccessService.setAccess(idsOf(users), null);
+    accessList = AccessService.setAccess(idsOf(users), null);
     Assert.isNull(rowOf(accessList.rows, users[0].Id));
     Assert.areEqual(0, assignmentCount(users));
   }
@@ -81,12 +81,11 @@ private class SFI_AccessServiceTest {
   @IsTest
   static void accessListPutsAdminsFirst() {
     List<User> users = newStandardUsers(2);
-    SFI_AccessService.setAccess(new List<String>{ users[0].Id }, 'User');
-    SFI_AccessService.setAccess(new List<String>{ users[1].Id }, 'Admin');
-    List<SFI_AccessService.AccessRow> rows = SFI_AccessService.getAccessList()
-      .rows;
+    AccessService.setAccess(new List<String>{ users[0].Id }, 'User');
+    AccessService.setAccess(new List<String>{ users[1].Id }, 'Admin');
+    List<AccessService.AccessRow> rows = AccessService.getAccessList().rows;
     Assert.areEqual('Admin', rows[0].level);
-    SFI_AccessService.AccessRow row = rowOf(rows, users[0].Id);
+    AccessService.AccessRow row = rowOf(rows, users[0].Id);
     Assert.areEqual('Standard User', row.profileName);
     Assert.isFalse(row.isCurrentUser);
   }
@@ -94,47 +93,45 @@ private class SFI_AccessServiceTest {
   @IsTest
   static void findUsersByNameOrProfileShowsTheirAccess() {
     List<User> users = newStandardUsers(2);
-    SFI_AccessService.setAccess(new List<String>{ users[0].Id }, 'User');
+    AccessService.setAccess(new List<String>{ users[0].Id }, 'User');
 
-    List<SFI_AccessService.AccessRow> found = SFI_AccessService.findUsers(
+    List<AccessService.AccessRow> found = AccessService.findUsers(
       'SFI Access',
       null
     );
     Assert.areEqual('User', rowOf(found, users[0].Id).level);
     Assert.isNull(rowOf(found, users[1].Id).level);
 
-    found = SFI_AccessService.findUsers('', users[1].ProfileId);
+    found = AccessService.findUsers('', users[1].ProfileId);
     Assert.isNotNull(rowOf(found, users[1].Id));
-    Assert.isTrue(SFI_AccessService.findUsers('a', null).isEmpty());
+    Assert.isTrue(AccessService.findUsers('a', null).isEmpty());
   }
 
   @IsTest
   static void findUsersByLoginMatchesUsernamesAndEmails() {
     List<User> users = newStandardUsers(2);
-    SFI_AccessService.setAccess(new List<String>{ users[0].Id }, 'Admin');
+    AccessService.setAccess(new List<String>{ users[0].Id }, 'Admin');
 
-    List<SFI_AccessService.AccessRow> found = SFI_AccessService.findUsersByLogin(
+    List<AccessService.AccessRow> found = AccessService.findUsersByLogin(
       new List<String>{ ' ' + users[0].Username.toUpperCase() + ' ', '', null }
     );
     Assert.areEqual(1, found.size());
     Assert.areEqual('Admin', found[0].level);
 
     // Both test users share the same email
-    found = SFI_AccessService.findUsersByLogin(
+    found = AccessService.findUsersByLogin(
       new List<String>{ 'SFI.Access@example.com' }
     );
     Assert.isNotNull(rowOf(found, users[1].Id));
     Assert.areEqual('sfi.access@example.com', rowOf(found, users[1].Id).email);
-    Assert.isTrue(SFI_AccessService.findUsersByLogin(null).isEmpty());
+    Assert.isTrue(AccessService.findUsersByLogin(null).isEmpty());
   }
 
   @IsTest
   static void profilesCountTheirActiveUsers() {
     List<User> users = newStandardUsers(1);
     Boolean found = false;
-    for (
-      SFI_AccessService.ProfileOption option : SFI_AccessService.getProfiles()
-    ) {
+    for (AccessService.ProfileOption option : AccessService.getProfiles()) {
       if (option.id == users[0].ProfileId) {
         found = true;
         Assert.isTrue(option.userCount >= 1);
@@ -146,7 +143,7 @@ private class SFI_AccessServiceTest {
   @IsTest
   static void setAccessRejectsUnknownLevel() {
     try {
-      SFI_AccessService.setAccess(
+      AccessService.setAccess(
         new List<String>{ UserInfo.getUserId() },
         'Owner'
       );
@@ -160,12 +157,9 @@ private class SFI_AccessServiceTest {
   static void userWithoutAssignPermissionSetsIsRejected() {
     User standardUser = newStandardUsers(1)[0];
     System.runAs(standardUser) {
-      Assert.isFalse(SFI_AccessService.getAccessList().canAssign);
+      Assert.isFalse(AccessService.getAccessList().canAssign);
       try {
-        SFI_AccessService.setAccess(
-          new List<String>{ standardUser.Id },
-          'User'
-        );
+        AccessService.setAccess(new List<String>{ standardUser.Id }, 'User');
         Assert.fail('An exception was expected');
       } catch (AuraHandledException e) {
         Assert.isTrue(

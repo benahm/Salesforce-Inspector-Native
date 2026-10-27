@@ -1,8 +1,8 @@
 import { LightningElement } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import LightningConfirm from "lightning/confirm";
-import getAccessList from "@salesforce/apex/SFI_AccessService.getAccessList";
-import setAccess from "@salesforce/apex/SFI_AccessService.setAccess";
+import getAccessList from "@salesforce/apex/AccessService.getAccessList";
+import setAccess from "@salesforce/apex/AccessService.setAccess";
 import AccessAddModal from "c/accessAddModal";
 import { containsIgnoreCase, mergeSelection, reduceErrors } from "c/utils";
 

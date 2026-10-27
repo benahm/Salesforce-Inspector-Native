@@ -1,7 +1,7 @@
 /**
  * Users tab of the launcher. Queries and DML run in USER_MODE.
  */
-public with sharing class SFI_UserService {
+public with sharing class UserService {
   private static final Integer MAX_RESULTS = 20;
   private static final String USER_FIELDS =
     'Id, Name, Alias, Username, Email, ProfileId, Profile.Name, UserRole.Name, ' +
@@ -70,11 +70,11 @@ public with sharing class SFI_UserService {
         AccessLevel.USER_MODE
       );
       if (users.isEmpty()) {
-        throw new SFI_Exception('User not found: ' + userId);
+        throw new InspectorException('User not found: ' + userId);
       }
       return new UserDetails(users[0]);
     } catch (Exception e) {
-      throw SFI_Exception.toAura(e);
+      throw InspectorException.toAura(e);
     }
   }
 
@@ -101,7 +101,7 @@ public with sharing class SFI_UserService {
       }
       return result;
     } catch (Exception e) {
-      throw SFI_Exception.toAura(e);
+      throw InspectorException.toAura(e);
     }
   }
 
@@ -121,7 +121,7 @@ public with sharing class SFI_UserService {
       );
       return getUser(userId);
     } catch (Exception e) {
-      throw SFI_Exception.toAura(e);
+      throw InspectorException.toAura(e);
     }
   }
 }

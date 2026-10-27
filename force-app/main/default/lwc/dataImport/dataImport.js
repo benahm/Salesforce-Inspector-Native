@@ -3,9 +3,9 @@ import { CurrentPageReference } from "lightning/navigation";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import LightningConfirm from "lightning/confirm";
 import LightningPrompt from "lightning/prompt";
-import listObjects from "@salesforce/apex/SFI_DescribeService.listObjects";
-import getImportFields from "@salesforce/apex/SFI_ImportService.getImportFields";
-import importBatch from "@salesforce/apex/SFI_ImportService.importBatch";
+import listObjects from "@salesforce/apex/DescribeService.listObjects";
+import getImportFields from "@salesforce/apex/ImportService.getImportFields";
+import importBatch from "@salesforce/apex/ImportService.importBatch";
 import {
   containsIgnoreCase,
   dataExportUrl,

@@ -2,10 +2,10 @@
  * SF Inspector Setup tab: adds or removes the SF Inspector global action in the
  * Global publisher layout with the Apex Metadata API, without callouts.
  */
-public with sharing class SFI_SetupService {
+public with sharing class SetupService {
   @TestVisible
   private static final String GLOBAL_LAYOUT = 'Global-Global Layout';
-  private static final String ACTION = 'SFI_Inspector';
+  private static final String ACTION = 'Inspector';
 
   @TestVisible
   private static LayoutStore store = new MetadataLayoutStore();
@@ -36,7 +36,7 @@ public with sharing class SFI_SetupService {
         new List<String>{ layoutName }
       );
       if (items.isEmpty()) {
-        throw new SFI_Exception('Layout not found: ' + layoutName);
+        throw new InspectorException('Layout not found: ' + layoutName);
       }
       return (Metadata.Layout) items[0];
     }
@@ -60,7 +60,7 @@ public with sharing class SFI_SetupService {
         indexOfAction(store.retrieve(GLOBAL_LAYOUT)) >= 0;
       return status;
     } catch (Exception e) {
-      throw SFI_Exception.toAura(e);
+      throw InspectorException.toAura(e);
     }
   }
 
@@ -87,7 +87,7 @@ public with sharing class SFI_SetupService {
       renumber(items);
       return store.deploy(layout);
     } catch (Exception e) {
-      throw SFI_Exception.toAura(e);
+      throw InspectorException.toAura(e);
     }
   }
 
@@ -107,24 +107,24 @@ public with sharing class SFI_SetupService {
       renumber(items);
       return store.deploy(layout);
     } catch (Exception e) {
-      throw SFI_Exception.toAura(e);
+      throw InspectorException.toAura(e);
     }
   }
 
   private static Metadata.Layout retrieveForUpdate() {
     if (!canCustomize()) {
-      throw new SFI_Exception(
+      throw new InspectorException(
         'The Customize Application permission is required to change the global actions.'
       );
     }
     return store.retrieve(GLOBAL_LAYOUT);
   }
 
-  // Installed, the action carries the namespace (sfinative__SFI_Inspector), except
+  // Installed, the action carries the namespace (sfinative__Inspector), except
   // in the org that owns the namespace, where metadata names have no prefix.
   @TestVisible
   private static String actionName() {
-    String className = SFI_SetupService.class.getName();
+    String className = SetupService.class.getName();
     if (!className.contains('.')) {
       return ACTION;
     }

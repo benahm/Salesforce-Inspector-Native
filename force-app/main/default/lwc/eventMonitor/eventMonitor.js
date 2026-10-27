@@ -8,7 +8,7 @@ import {
   subscribe,
   unsubscribe
 } from "lightning/empApi";
-import getChannels from "@salesforce/apex/SFI_EventService.getChannels";
+import getChannels from "@salesforce/apex/EventService.getChannels";
 import { containsIgnoreCase, copyToClipboard, reduceErrors } from "c/utils";
 
 const MANUAL = "manual";

@@ -2,9 +2,9 @@ import { LightningElement, wire } from "lwc";
 import { CurrentPageReference } from "lightning/navigation";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import LightningPrompt from "lightning/prompt";
-import runQuery from "@salesforce/apex/SFI_QueryService.runQuery";
-import listObjects from "@salesforce/apex/SFI_DescribeService.listObjects";
-import getFields from "@salesforce/apex/SFI_DescribeService.getFields";
+import runQuery from "@salesforce/apex/QueryService.runQuery";
+import listObjects from "@salesforce/apex/DescribeService.listObjects";
+import getFields from "@salesforce/apex/DescribeService.getFields";
 import {
   containsIgnoreCase,
   copyToClipboard,

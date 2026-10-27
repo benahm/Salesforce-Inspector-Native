@@ -1,6 +1,6 @@
 import { LightningElement } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
-import getLimits from "@salesforce/apex/SFI_LimitsService.getLimits";
+import getLimits from "@salesforce/apex/LimitsService.getLimits";
 import { containsIgnoreCase, copyToClipboard, reduceErrors } from "c/utils";
 
 // "DailyApiRequests" -> "Daily Api Requests"

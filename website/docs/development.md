@@ -19,7 +19,7 @@ npm install
 ```bash
 sf org create scratch --definition-file config/project-scratch-def.json --alias sfi-dev --duration-days 30
 sf project deploy start --target-org sfi-dev
-sf org assign permset --name SFI_Inspector_Admin --target-org sfi-dev
+sf org assign permset --name Admin --target-org sfi-dev
 sf org open --target-org sfi-dev
 ```
 

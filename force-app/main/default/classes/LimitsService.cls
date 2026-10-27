@@ -1,7 +1,7 @@
 /**
  * Org Limits tool: the same counters as REST /limits, read from Apex.
  */
-public with sharing class SFI_LimitsService {
+public with sharing class LimitsService {
   public class LimitInfo {
     @AuraEnabled
     public String name;
@@ -26,7 +26,7 @@ public with sharing class SFI_LimitsService {
       }
       return result;
     } catch (Exception e) {
-      throw SFI_Exception.toAura(e);
+      throw InspectorException.toAura(e);
     }
   }
 }

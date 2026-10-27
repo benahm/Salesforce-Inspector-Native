@@ -1,10 +1,8 @@
 @IsTest
-private class SFI_DescribeServiceTest {
+private class DescribeServiceTest {
   @IsTest
   static void getObjectInfoReturnsAccount() {
-    SFI_DescribeService.ObjectInfo info = SFI_DescribeService.getObjectInfo(
-      'Account'
-    );
+    DescribeService.ObjectInfo info = DescribeService.getObjectInfo('Account');
     Assert.areEqual('Account', info.name);
     Assert.areEqual('001', info.keyPrefix);
   }
@@ -12,9 +10,7 @@ private class SFI_DescribeServiceTest {
   @IsTest
   static void listObjectsIncludesAccount() {
     Boolean found = false;
-    for (
-      SFI_DescribeService.ObjectInfo info : SFI_DescribeService.listObjects()
-    ) {
+    for (DescribeService.ObjectInfo info : DescribeService.listObjects()) {
       found = found || info.name == 'Account';
     }
     Assert.isTrue(found, 'Account should be listed');
@@ -24,9 +20,7 @@ private class SFI_DescribeServiceTest {
   static void getFieldsReturnsRelationships() {
     Boolean hasAccount = false;
     for (
-      SFI_DescribeService.FieldInfo field : SFI_DescribeService.getFields(
-        'Contact'
-      )
+      DescribeService.FieldInfo field : DescribeService.getFields('Contact')
     ) {
       if (field.name == 'AccountId') {
         hasAccount =
@@ -40,7 +34,7 @@ private class SFI_DescribeServiceTest {
   @IsTest
   static void getObjectInfoRejectsUnknownObject() {
     try {
-      SFI_DescribeService.getObjectInfo('Nope__c');
+      DescribeService.getObjectInfo('Nope__c');
       Assert.fail('An exception was expected');
     } catch (AuraHandledException e) {
       Assert.isTrue(e.getMessage().contains('Unknown object'), e.getMessage());

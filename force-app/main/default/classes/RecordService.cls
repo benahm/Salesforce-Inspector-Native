@@ -2,7 +2,7 @@
  * Reads a record with every field the running user can see (Show All Data).
  * All queries run in USER_MODE: sharing, CRUD and FLS of the user are enforced.
  */
-public with sharing class SFI_RecordService {
+public with sharing class RecordService {
   public class RecordData {
     @AuraEnabled
     public String recordId;
@@ -63,7 +63,7 @@ public with sharing class SFI_RecordService {
       Schema.DescribeSObjectResult objectDescribe = parsedId.getSObjectType()
         .getDescribe();
       if (!objectDescribe.isQueryable()) {
-        throw new SFI_Exception(
+        throw new InspectorException(
           objectDescribe.getName() + ' cannot be queried.'
         );
       }
@@ -106,7 +106,7 @@ public with sharing class SFI_RecordService {
       data.childRelationships = getChildRelationships(objectDescribe);
       return data;
     } catch (Exception e) {
-      throw SFI_Exception.toAura(e);
+      throw InspectorException.toAura(e);
     }
   }
 
@@ -121,12 +121,14 @@ public with sharing class SFI_RecordService {
   ) {
     try {
       Id parsedId = parseId(recordId);
-      Schema.DescribeSObjectResult childDescribe = SFI_DescribeService.describe(
+      Schema.DescribeSObjectResult childDescribe = DescribeService.describe(
         childObject
       );
       Schema.SObjectField childField = childDescribe.fields.getMap().get(field);
       if (childField == null) {
-        throw new SFI_Exception('Unknown field: ' + childObject + '.' + field);
+        throw new InspectorException(
+          'Unknown field: ' + childObject + '.' + field
+        );
       }
       String soql =
         'SELECT COUNT() FROM ' +
@@ -140,7 +142,7 @@ public with sharing class SFI_RecordService {
         AccessLevel.USER_MODE
       );
     } catch (Exception e) {
-      throw SFI_Exception.toAura(e);
+      throw InspectorException.toAura(e);
     }
   }
 
@@ -148,7 +150,7 @@ public with sharing class SFI_RecordService {
     try {
       return Id.valueOf(recordId == null ? '' : recordId.trim());
     } catch (Exception e) {
-      throw new SFI_Exception('Invalid record Id: ' + recordId);
+      throw new InspectorException('Invalid record Id: ' + recordId);
     }
   }
 
@@ -173,7 +175,7 @@ public with sharing class SFI_RecordService {
       AccessLevel.USER_MODE
     );
     if (records.isEmpty()) {
-      throw new SFI_Exception(
+      throw new InspectorException(
         'Record not found or not accessible: ' + recordId
       );
     }

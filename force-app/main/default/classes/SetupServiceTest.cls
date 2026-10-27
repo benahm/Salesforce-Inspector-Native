@@ -1,6 +1,6 @@
 @IsTest
-private class SFI_SetupServiceTest {
-  private class StubStore implements SFI_SetupService.LayoutStore {
+private class SetupServiceTest {
+  private class StubStore implements SetupService.LayoutStore {
     Metadata.Layout layout;
     Metadata.Layout deployed;
 
@@ -17,13 +17,13 @@ private class SFI_SetupServiceTest {
   private static StubStore stub(Metadata.Layout layout) {
     StubStore store = new StubStore();
     store.layout = layout;
-    SFI_SetupService.store = store;
+    SetupService.store = store;
     return store;
   }
 
   private static Metadata.Layout classicLayout() {
     Metadata.Layout layout = new Metadata.Layout();
-    layout.fullName = SFI_SetupService.GLOBAL_LAYOUT;
+    layout.fullName = SetupService.GLOBAL_LAYOUT;
     layout.quickActionList = new Metadata.QuickActionList();
     layout.quickActionList.quickActionListItems = new List<Metadata.QuickActionListItem>();
     for (String name : new List<String>{ 'FeedItem.TextPost', 'NewTask' }) {
@@ -47,10 +47,10 @@ private class SFI_SetupServiceTest {
   @IsTest
   static void addCopiesClassicActionsAndPutsActionFirst() {
     StubStore store = stub(classicLayout());
-    Id jobId = SFI_SetupService.addGlobalAction();
+    Id jobId = SetupService.addGlobalAction();
     Assert.isNotNull(jobId);
     Assert.areEqual(
-      new List<String>{ '0:' + SFI_SetupService.actionName(), '1:NewTask' },
+      new List<String>{ '0:' + SetupService.actionName(), '1:NewTask' },
       actionNames(store.deployed)
     );
     Assert.areEqual(
@@ -62,31 +62,31 @@ private class SFI_SetupServiceTest {
   @IsTest
   static void statusReflectsTheLayout() {
     StubStore store = stub(classicLayout());
-    Assert.isFalse(SFI_SetupService.getStatus().hasGlobalAction);
-    SFI_SetupService.addGlobalAction();
+    Assert.isFalse(SetupService.getStatus().hasGlobalAction);
+    SetupService.addGlobalAction();
     store.layout = store.deployed;
-    SFI_SetupService.Status status = SFI_SetupService.getStatus();
+    SetupService.Status status = SetupService.getStatus();
     Assert.isTrue(status.hasGlobalAction);
     Assert.isTrue(status.canCustomize);
-    Assert.areEqual(SFI_SetupService.GLOBAL_LAYOUT, status.layoutName);
+    Assert.areEqual(SetupService.GLOBAL_LAYOUT, status.layoutName);
   }
 
   @IsTest
   static void addTwiceDoesNotDeploy() {
     StubStore store = stub(classicLayout());
-    SFI_SetupService.addGlobalAction();
+    SetupService.addGlobalAction();
     store.layout = store.deployed;
     store.deployed = null;
-    Assert.isNull(SFI_SetupService.addGlobalAction());
+    Assert.isNull(SetupService.addGlobalAction());
     Assert.isNull(store.deployed);
   }
 
   @IsTest
   static void removeDropsActionAndRenumbers() {
     StubStore store = stub(classicLayout());
-    SFI_SetupService.addGlobalAction();
+    SetupService.addGlobalAction();
     store.layout = store.deployed;
-    Assert.isNotNull(SFI_SetupService.removeGlobalAction());
+    Assert.isNotNull(SetupService.removeGlobalAction());
     Assert.areEqual(
       new List<String>{ '0:NewTask' },
       actionNames(store.deployed)
@@ -96,7 +96,7 @@ private class SFI_SetupServiceTest {
   @IsTest
   static void removeWithoutActionDoesNotDeploy() {
     StubStore store = stub(classicLayout());
-    Assert.isNull(SFI_SetupService.removeGlobalAction());
+    Assert.isNull(SetupService.removeGlobalAction());
     Assert.isNull(store.deployed);
   }
 
@@ -117,9 +117,9 @@ private class SFI_SetupServiceTest {
     );
     insert standardUser;
     System.runAs(standardUser) {
-      Assert.isFalse(SFI_SetupService.getStatus().canCustomize);
+      Assert.isFalse(SetupService.getStatus().canCustomize);
       try {
-        SFI_SetupService.addGlobalAction();
+        SetupService.addGlobalAction();
         Assert.fail('An exception was expected');
       } catch (AuraHandledException e) {
         Assert.isTrue(

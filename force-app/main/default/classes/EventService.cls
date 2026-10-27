@@ -3,7 +3,7 @@
  * lightning/empApi. Reads EntityDefinition only (no Tooling API), so custom
  * channels and real-time events are typed by hand in the monitor.
  */
-public with sharing class SFI_EventService {
+public with sharing class EventService {
   private static final String STANDARD_EVENTS =
     'SELECT QualifiedApiName, Label FROM EntityDefinition' +
     ' WHERE IsCustomizable = FALSE AND IsEverCreatable = TRUE' +
@@ -49,7 +49,7 @@ public with sharing class SFI_EventService {
         prefix = '/data/';
         result.add(new Channel('All Change Events', '/data/ChangeEvents'));
       } else {
-        throw new SFI_Exception('Unknown channel type: ' + channelType);
+        throw new InspectorException('Unknown channel type: ' + channelType);
       }
       // A SOQL for loop fetches in chunks, and EntityDefinition has no queryMore()
       List<EntityDefinition> entities = Database.query(query);
@@ -58,7 +58,7 @@ public with sharing class SFI_EventService {
       }
       return result;
     } catch (Exception e) {
-      throw SFI_Exception.toAura(e);
+      throw InspectorException.toAura(e);
     }
   }
 }

@@ -5,39 +5,39 @@
   >Grants access to SF Inspector Native. Data access still follows the user's own sharing, CRUD and FLS.</description>
     <hasActivationRequired>false</hasActivationRequired>
     <classAccesses>
-        <apexClass>SFI_DescribeService</apexClass>
+        <apexClass>DescribeService</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>SFI_UserService</apexClass>
+        <apexClass>UserService</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>SFI_EventService</apexClass>
+        <apexClass>EventService</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>SFI_LimitsService</apexClass>
+        <apexClass>LimitsService</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>SFI_LogService</apexClass>
+        <apexClass>LogService</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>SFI_ImportService</apexClass>
+        <apexClass>ImportService</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>SFI_QueryService</apexClass>
+        <apexClass>QueryService</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>SFI_RecordService</apexClass>
+        <apexClass>RecordService</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
-        <apexClass>SFI_SearchService</apexClass>
+        <apexClass>SearchService</apexClass>
         <enabled>true</enabled>
     </classAccesses>
 </PermissionSet>

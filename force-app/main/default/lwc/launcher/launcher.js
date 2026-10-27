@@ -1,10 +1,10 @@
 import { LightningElement, wire } from "lwc";
 import { CurrentPageReference } from "lightning/navigation";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
-import search from "@salesforce/apex/SFI_SearchService.search";
-import getUser from "@salesforce/apex/SFI_UserService.getUser";
-import searchUsers from "@salesforce/apex/SFI_UserService.searchUsers";
-import setDebugMode from "@salesforce/apex/SFI_UserService.setDebugMode";
+import search from "@salesforce/apex/SearchService.search";
+import getUser from "@salesforce/apex/UserService.getUser";
+import searchUsers from "@salesforce/apex/UserService.searchUsers";
+import setDebugMode from "@salesforce/apex/UserService.setDebugMode";
 import ShowAllDataModal from "c/showAllDataModal";
 import {
   copyToClipboard,

@@ -3,11 +3,11 @@
  * permission set, one user or many at once. Admin includes everything User grants,
  * so a user holds one of them.
  */
-public with sharing class SFI_AccessService {
+public with sharing class AccessService {
   @TestVisible
-  private static final String USER_PERMISSION_SET = 'SFI_Inspector_User';
+  private static final String USER_PERMISSION_SET = 'User';
   @TestVisible
-  private static final String ADMIN_PERMISSION_SET = 'SFI_Inspector_Admin';
+  private static final String ADMIN_PERMISSION_SET = 'Admin';
   private static final String LEVEL_USER = 'User';
   private static final String LEVEL_ADMIN = 'Admin';
   private static final Integer MAX_CANDIDATES = 200;
@@ -93,7 +93,7 @@ public with sharing class SFI_AccessService {
       result.rows.addAll(users);
       return result;
     } catch (Exception e) {
-      throw SFI_Exception.toAura(e);
+      throw InspectorException.toAura(e);
     }
   }
 
@@ -140,7 +140,7 @@ public with sharing class SFI_AccessService {
       }
       return result;
     } catch (Exception e) {
-      throw SFI_Exception.toAura(e);
+      throw InspectorException.toAura(e);
     }
   }
 
@@ -177,7 +177,7 @@ public with sharing class SFI_AccessService {
       }
       return result;
     } catch (Exception e) {
-      throw SFI_Exception.toAura(e);
+      throw InspectorException.toAura(e);
     }
   }
 
@@ -204,7 +204,7 @@ public with sharing class SFI_AccessService {
       }
       return result;
     } catch (Exception e) {
-      throw SFI_Exception.toAura(e);
+      throw InspectorException.toAura(e);
     }
   }
 
@@ -215,7 +215,7 @@ public with sharing class SFI_AccessService {
   public static AccessList setAccess(List<String> userIds, String level) {
     try {
       if (!canAssign()) {
-        throw new SFI_Exception(
+        throw new InspectorException(
           'The Assign Permission Sets permission is required to change the access.'
         );
       }
@@ -224,7 +224,7 @@ public with sharing class SFI_AccessService {
         level != LEVEL_USER &&
         level != LEVEL_ADMIN
       ) {
-        throw new SFI_Exception('Unknown access level: ' + level);
+        throw new InspectorException('Unknown access level: ' + level);
       }
       Set<Id> assigneeIds = new Set<Id>();
       for (String userId : userIds) {
@@ -249,7 +249,7 @@ public with sharing class SFI_AccessService {
       }
       return getAccessList();
     } catch (Exception e) {
-      throw SFI_Exception.toAura(e);
+      throw InspectorException.toAura(e);
     }
   }
 
@@ -286,7 +286,7 @@ public with sharing class SFI_AccessService {
 
   // The permission sets of this package: with the namespace once installed.
   private static Map<String, Id> permissionSetIds() {
-    String className = SFI_AccessService.class.getName();
+    String className = AccessService.class.getName();
     String namespace = className.contains('.')
       ? className.substringBefore('.')
       : null;
