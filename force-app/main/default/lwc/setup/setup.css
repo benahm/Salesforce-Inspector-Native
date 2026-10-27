@@ -1,0 +1,60 @@
+.sfi-container {
+  position: relative;
+  min-height: 200px;
+}
+
+.sfi-section {
+  max-width: 56rem;
+}
+
+.sfi-mono {
+  font-family: "Consolas", "Monaco", monospace;
+  font-size: 0.75rem;
+}
+
+.sfi-inline-spinner {
+  position: relative;
+  width: 2rem;
+  height: 2rem;
+}
+
+.sfi-help .slds-dl_horizontal__label {
+  width: 10rem;
+}
+
+.sfi-help .slds-dl_horizontal__detail {
+  width: calc(100% - 10rem);
+}
+
+.sfi-logo {
+  display: block;
+  width: 3.5rem;
+  height: 3.5rem;
+}
+
+/* Dots that fill up while the layout is deployed: the width is fixed so the badge doesn't move. */
+.sfi-dots {
+  display: inline-block;
+  width: 1.1em;
+  text-align: left;
+}
+
+.sfi-dots::after {
+  content: "";
+  animation: sfi-dots 1.2s steps(1, end) infinite;
+}
+
+@keyframes sfi-dots {
+  0% {
+    content: "";
+  }
+  25% {
+    content: ".";
+  }
+  50% {
+    content: "..";
+  }
+  75% {
+    content: "...";
+  }
+}

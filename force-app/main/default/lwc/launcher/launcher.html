@@ -1,0 +1,295 @@
+<template>
+  <div class="sfi-launcher" style={rootStyle}>
+    <!-- Compact tab bar -->
+    <div class="slds-tabs_default sfi-tabs">
+      <ul class="slds-tabs_default__nav" role="tablist">
+        <template for:each={tabs} for:item="tab">
+          <li key={tab.value} class={tab.itemClass} role="presentation">
+            <a
+              class="slds-tabs_default__link"
+              role="tab"
+              href="#"
+              aria-selected={tab.selected}
+              aria-label={tab.title}
+              title={tab.title}
+              data-tab={tab.value}
+              onclick={handleTab}
+            >
+              <template lwc:if={tab.icon}>
+                <lightning-icon
+                  icon-name={tab.icon}
+                  size="x-small"
+                  alternative-text={tab.title}
+                  class="sfi-tab-icon"
+                ></lightning-icon>
+              </template>
+              <template lwc:else>{tab.label}</template>
+            </a>
+          </li>
+        </template>
+        <li
+          class="sfi-version slds-col_bump-left slds-text-body_small slds-text-color_weak"
+          role="presentation"
+        >
+          SFI Native v{version}
+        </li>
+      </ul>
+    </div>
+
+    <div class="sfi-body">
+      <!-- Objects tab: inspector of the page record / object, or any searched one -->
+      <template lwc:if={isContextTab}>
+        <c-object-inspector
+          page-record-id={recordId}
+          page-object-api-name={objectApiName}
+        ></c-object-inspector>
+      </template>
+
+      <!-- Users tab (aligned on Salesforce Inspector Reloaded) -->
+      <template lwc:if={isUsersTab}>
+        <lightning-input
+          type="search"
+          variant="label-hidden"
+          placeholder="Name, username, email or alias"
+          value={userSearch}
+          onchange={handleUserSearch}
+          class="slds-m-bottom_x-small"
+        ></lightning-input>
+        <div class="sfi-fill">
+          <template lwc:if={hasUserResults}>
+            <ul class="slds-has-dividers_bottom-space slds-m-bottom_x-small">
+              <template for:each={userResultRows} for:item="result">
+                <li key={result.id} class="slds-item slds-p-vertical_xx-small">
+                  <a href="#" data-id={result.id} onclick={handleUserPick}
+                    >{result.name} ({result.alias})</a
+                  >
+                  <p
+                    class="slds-text-body_small slds-text-color_weak slds-truncate"
+                  >
+                    {result.detail}
+                  </p>
+                </li>
+              </template>
+            </ul>
+          </template>
+          <template lwc:if={userError}>
+            <div
+              class="slds-notify slds-notify_alert slds-alert_error"
+              role="alert"
+            >
+              {userError}
+            </div>
+          </template>
+          <template lwc:if={isLoadingUser}>
+            <div class="sfi-spinner-holder">
+              <lightning-spinner
+                alternative-text="Loading"
+                size="small"
+              ></lightning-spinner>
+            </div>
+          </template>
+          <template lwc:if={user}>
+            <table class="sfi-info-table">
+              <tbody>
+                <tr>
+                  <th>Name</th>
+                  <td class="slds-truncate">
+                    <a href={userLinks.details} target="_blank">{user.name}</a>
+                    <span class="slds-m-left_xx-small">({user.alias})</span>
+                  </td>
+                </tr>
+                <tr>
+                  <th>Username</th>
+                  <td class="slds-truncate" title={user.username}>
+                    {user.username}
+                  </td>
+                </tr>
+                <tr>
+                  <th>Id</th>
+                  <td>
+                    <a
+                      href={userLinks.showAllData}
+                      onclick={handleUserShowAllData}
+                      class="sfi-mono"
+                      >{user.id}</a
+                    >
+                    <lightning-button-icon
+                      icon-name="utility:copy"
+                      variant="bare"
+                      size="small"
+                      alternative-text="Copy Id"
+                      title="Copy Id"
+                      data-value={user.id}
+                      onclick={handleCopy}
+                      class="slds-m-left_xx-small"
+                    ></lightning-button-icon>
+                  </td>
+                </tr>
+                <tr>
+                  <th>E-mail</th>
+                  <td class="slds-truncate" title={user.email}>{user.email}</td>
+                </tr>
+                <tr>
+                  <th>Profile</th>
+                  <td class="slds-truncate">
+                    <a href={userLinks.profile} target="_blank"
+                      >{user.profileName}</a
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <th>Role</th>
+                  <td class="slds-truncate">{user.roleName}</td>
+                </tr>
+                <tr>
+                  <th>Language</th>
+                  <td>{userLanguage}</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="sfi-button-rows">
+              <div class="slds-button-group" role="group">
+                <a
+                  href={userLinks.details}
+                  target="_blank"
+                  class="slds-button slds-button_neutral"
+                  >Details</a
+                >
+                <a
+                  href={userLinks.permissionSets}
+                  target="_blank"
+                  class="slds-button slds-button_neutral"
+                  title="Show / assign user's permission sets"
+                  >PSet</a
+                >
+                <a
+                  href={userLinks.permissionSetGroups}
+                  target="_blank"
+                  class="slds-button slds-button_neutral"
+                  title="Show / assign user's permission set groups"
+                  >PSetG</a
+                >
+              </div>
+              <div class="slds-button-group" role="group">
+                <a
+                  href={userLinks.debugLogs}
+                  target="_blank"
+                  class="slds-button slds-button_neutral"
+                  title="Setup > Debug Logs: add a trace flag for this user"
+                  >Enable Logs</a
+                >
+                <button
+                  class="slds-button slds-button_neutral"
+                  disabled={isSavingUser}
+                  onclick={handleToggleDebugMode}
+                  title="Debug mode for Lightning components"
+                >
+                  {debugModeLabel}
+                </button>
+              </div>
+              <template lwc:if={canLoginAs}>
+                <div class="slds-button-group" role="group">
+                  <a
+                    href={userLinks.loginAs}
+                    target="_blank"
+                    class="slds-button slds-button_neutral"
+                    >LoginAs</a
+                  >
+                </div>
+              </template>
+            </div>
+          </template>
+        </div>
+      </template>
+
+      <!-- Search tab -->
+      <template lwc:if={isSearchTab}>
+        <div class="slds-grid slds-m-bottom_x-small">
+          <lightning-combobox
+            variant="label-hidden"
+            label="Type"
+            value={searchType}
+            options={searchTypes}
+            onchange={handleSearchType}
+            class="sfi-search-type slds-m-right_x-small"
+          ></lightning-combobox>
+          <lightning-input
+            type="search"
+            variant="label-hidden"
+            placeholder={searchPlaceholder}
+            value={searchTerm}
+            onchange={handleSearchTerm}
+            is-loading={isSearching}
+            class="slds-col"
+          ></lightning-input>
+        </div>
+        <template lwc:if={searchError}>
+          <div
+            class="slds-notify slds-notify_alert slds-alert_error"
+            role="alert"
+          >
+            {searchError}
+          </div>
+        </template>
+        <div class="sfi-fill">
+          <template lwc:if={hasSearchResults}>
+            <ul class="slds-has-dividers_bottom-space">
+              <template for:each={searchRows} for:item="result">
+                <li key={result.id} class="slds-item slds-p-vertical_xx-small">
+                  <a href={result.url} target="_blank" class="sfi-mono">
+                    <lightning-formatted-rich-text
+                      value={result.markedName}
+                    ></lightning-formatted-rich-text>
+                  </a>
+                  <p
+                    class="slds-text-body_small slds-text-color_weak slds-truncate"
+                    title={result.detail}
+                  >
+                    {result.detail}
+                  </p>
+                </li>
+              </template>
+            </ul>
+          </template>
+          <template lwc:if={hasNoSearchResults}>
+            <p class="slds-text-color_weak slds-p-around_small">No results.</p>
+          </template>
+        </div>
+      </template>
+
+      <!-- Tools tab: every SF Inspector tool, enabled as modules ship -->
+      <template lwc:if={isToolsTab}>
+        <div class="sfi-fill">
+          <template for:each={toolSections} for:item="section">
+            <div key={section.title} class="sfi-tool-section">
+              <p class="slds-text-title_bold slds-m-bottom_x-small">
+                {section.title}
+              </p>
+              <div class="sfi-tool-grid">
+                <template for:each={section.tools} for:item="tool">
+                  <a
+                    key={tool.label}
+                    href={tool.url}
+                    target="_blank"
+                    class={tool.className}
+                    title={tool.title}
+                    aria-disabled={tool.ariaDisabled}
+                    onclick={handleToolClick}
+                  >
+                    {tool.label}
+                    <template lwc:if={tool.soon}>
+                      <span
+                        class="slds-badge slds-badge_lightest slds-m-left_x-small"
+                        >Soon</span
+                      >
+                    </template>
+                  </a>
+                </template>
+              </div>
+            </div>
+          </template>
+        </div>
+      </template>
+    </div>
+  </div>
+</template>

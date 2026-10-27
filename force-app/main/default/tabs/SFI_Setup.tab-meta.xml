@@ -2,6 +2,6 @@
 <CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
     <description>Adds or removes the SF Inspector global action.</description>
     <label>SF Inspector Setup</label>
-    <lwcComponent>sfiSetup</lwcComponent>
+    <lwcComponent>setup</lwcComponent>
     <motif>Custom19: Wrench</motif>
 </CustomTab>

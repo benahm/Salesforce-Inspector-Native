@@ -1,0 +1,142 @@
+<template>
+  <div class="slds-card sfi-container">
+    <div class="slds-page-header">
+      <div class="slds-page-header__row">
+        <div class="slds-page-header__col-title">
+          <div class="slds-media slds-media_center">
+            <div class="slds-media__figure">
+              <img
+                class="sfi-logo"
+                src={logoUrl}
+                alt="SF Inspector Native"
+                width="56"
+                height="56"
+              />
+            </div>
+            <div class="slds-media__body">
+              <h1 class="slds-page-header__title">SF Inspector Setup</h1>
+              <p class="slds-text-body_small slds-text-color_weak">
+                <span>SF Inspector Native v{version}</span>
+                <span class="slds-m-horizontal_x-small">·</span>
+                <a href={releasesUrl} target="_blank" rel="noopener"
+                  >Release notes</a
+                >
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <template lwc:if={error}>
+      <div
+        class="slds-notify slds-notify_alert slds-alert_error slds-m-around_small"
+        role="alert"
+      >
+        {error}
+      </div>
+    </template>
+
+    <div class="slds-p-around_medium">
+      <article class="slds-box sfi-section">
+        <div class="slds-grid slds-grid_vertical-align-center">
+          <div class="slds-col">
+            <h2 class="slds-text-heading_small">Global Action</h2>
+            <p
+              class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small"
+            >
+              Shows SF Inspector in the global actions menu (+) of every
+              Lightning page.
+            </p>
+            <p class="slds-text-body_small slds-text-color_weak">
+              Publisher layout: <span class="sfi-mono">{layoutName}</span>
+            </p>
+          </div>
+          <template lwc:if={isLoading}>
+            <div class="sfi-inline-spinner">
+              <lightning-spinner
+                alternative-text="Loading"
+                size="small"
+              ></lightning-spinner>
+            </div>
+          </template>
+          <template lwc:elseif={status}>
+            <template lwc:if={isDeploying}>
+              <span class="slds-badge sfi-deploying" role="status"
+                >Deploying<span class="sfi-dots" aria-hidden="true"></span
+              ></span>
+            </template>
+            <template lwc:else>
+              <lightning-badge
+                label={statusLabel}
+                class={statusClass}
+              ></lightning-badge>
+            </template>
+            <template lwc:if={status.canCustomize}>
+              <template lwc:if={status.hasGlobalAction}>
+                <lightning-button
+                  label="Remove"
+                  icon-name="utility:delete"
+                  onclick={handleRemove}
+                  disabled={isDeploying}
+                  class="slds-m-left_medium"
+                ></lightning-button>
+              </template>
+              <template lwc:else>
+                <lightning-button
+                  variant="brand"
+                  label="Add"
+                  icon-name="utility:add"
+                  onclick={handleAdd}
+                  disabled={isDeploying}
+                  class="slds-m-left_medium"
+                ></lightning-button>
+              </template>
+            </template>
+          </template>
+        </div>
+
+        <template lwc:if={isDeploying}>
+          <p class="slds-m-top_small slds-text-body_small">
+            Deploying the layout, this can take a minute.
+          </p>
+        </template>
+        <template lwc:if={cannotCustomize}>
+          <p class="slds-m-top_small slds-text-body_small">
+            The Customize Application permission is required to change the
+            global actions.
+          </p>
+        </template>
+
+        <dl
+          class="slds-dl_horizontal slds-m-top_small slds-text-body_small sfi-help"
+        >
+          <dt class="slds-dl_horizontal__label">
+            <a href={apexSettingsUrl} target="_blank">Apex Settings</a>
+          </dt>
+          <dd class="slds-dl_horizontal__detail slds-text-color_weak">
+            If the deployment fails for a package that is not security reviewed,
+            enable Deploy Metadata from Non-Certified Package Versions via Apex.
+          </dd>
+          <dt class="slds-dl_horizontal__label">
+            <a href={deployStatusUrl} target="_blank">Deployment Status</a>
+          </dt>
+          <dd class="slds-dl_horizontal__detail slds-text-color_weak">
+            Lists the deployments and their errors.
+          </dd>
+          <dt class="slds-dl_horizontal__label">
+            <a href={publisherLayoutsUrl} target="_blank">Publisher Layouts</a>
+          </dt>
+          <dd class="slds-dl_horizontal__detail slds-text-color_weak">
+            Edits the global actions by hand.
+          </dd>
+        </dl>
+        <p class="slds-m-top_small slds-text-body_small slds-text-color_weak">
+          Remove the action before uninstalling the package.
+        </p>
+      </article>
+
+      <c-setup-access class="slds-show slds-m-top_medium"></c-setup-access>
+    </div>
+  </div>
+</template>
