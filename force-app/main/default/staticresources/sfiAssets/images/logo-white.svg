@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="16 15 112 112" role="img" aria-label="SF Inspector Native">
+  <!-- A cloud (Salesforce) with a magnifying glass cut out of it. -->
+  <mask id="lens">
+    <rect x="0" y="0" width="140" height="140" fill="#fff"/>
+    <circle cx="66" cy="74" r="15" fill="none" stroke="#000" stroke-width="7"/>
+    <line x1="77" y1="85" x2="92" y2="100" stroke="#000" stroke-width="9" stroke-linecap="round"/>
+  </mask>
+  <g fill="#ffffff" mask="url(#lens)">
+    <circle cx="44" cy="84" r="24"/><circle cx="72" cy="66" r="32"/><circle cx="100" cy="84" r="24"/><rect x="44" y="84" width="56" height="24"/>
+  </g>
+</svg>
