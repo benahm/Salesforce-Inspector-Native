@@ -134,6 +134,30 @@ export function containsIgnoreCase(haystack, needle) {
   return (haystack || "").toLowerCase().includes((needle || "").toLowerCase());
 }
 
+/**
+ * A datatable only reports the selected rows it shows: keeps the ones it hides
+ * (filtered out, or from a previous search) selected.
+ */
+export function mergeSelection(selectedIds, shownIds, shownSelectedIds) {
+  const shown = new Set(shownIds);
+  return [...selectedIds.filter((id) => !shown.has(id)), ...shownSelectedIds];
+}
+
+/**
+ * Usernames or emails pasted one per line, or separated by commas, semicolons or
+ * spaces (a column copied from a spreadsheet): lowercase, without duplicates.
+ */
+export function parseLogins(text) {
+  return [
+    ...new Set(
+      (text || "")
+        .split(/[\s,;]+/)
+        .map((login) => login.trim().toLowerCase())
+        .filter((login) => login)
+    )
+  ];
+}
+
 export function debounce(fn, delay = 300) {
   let timeoutId;
   return (...args) => {

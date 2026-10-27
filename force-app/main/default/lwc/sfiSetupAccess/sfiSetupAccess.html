@@ -1,0 +1,135 @@
+<template>
+  <article class="slds-box sfi-section">
+    <div class="slds-grid slds-grid_vertical-align-center">
+      <div class="slds-col">
+        <h2 class="slds-text-heading_small">Access</h2>
+        <p
+          class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small"
+        >
+          {summary}
+        </p>
+      </div>
+      <template lwc:if={isBusy}>
+        <div class="sfi-inline-spinner">
+          <lightning-spinner
+            alternative-text="Loading"
+            size="small"
+          ></lightning-spinner>
+        </div>
+      </template>
+      <template lwc:if={canAssign}>
+        <lightning-button
+          variant="brand"
+          label="Add users"
+          icon-name="utility:add"
+          onclick={handleAddUsers}
+          disabled={isSaving}
+        ></lightning-button>
+      </template>
+    </div>
+
+    <template lwc:if={error}>
+      <div
+        class="slds-notify slds-notify_alert slds-alert_error slds-m-top_small"
+        role="alert"
+      >
+        {error}
+      </div>
+    </template>
+    <template lwc:if={cannotAssign}>
+      <p class="slds-m-top_small slds-text-body_small">
+        The Assign Permission Sets permission is required to change the access.
+      </p>
+    </template>
+
+    <template lwc:if={hasRows}>
+      <div
+        class="slds-grid slds-grid_vertical-align-end slds-gutters_x-small slds-m-top_medium"
+      >
+        <div class="slds-col slds-grow-none">
+          <lightning-radio-group
+            type="button"
+            label="Show"
+            variant="label-hidden"
+            options={levelFilterOptions}
+            value={levelFilter}
+            onchange={handleLevelFilter}
+          ></lightning-radio-group>
+        </div>
+        <div class="slds-col">
+          <lightning-input
+            type="search"
+            label="Filter this list"
+            variant="label-hidden"
+            placeholder="Filter by name, username or profile"
+            value={filterTerm}
+            onchange={handleFilterTerm}
+          ></lightning-input>
+        </div>
+      </div>
+
+      <div class="slds-m-top_x-small sfi-table">
+        <template lwc:if={hasShownRows}>
+          <lightning-datatable
+            key-field="userId"
+            data={shownRows}
+            columns={columns}
+            selected-rows={selectedIds}
+            onrowselection={handleRowSelection}
+            onrowaction={handleRowAction}
+            hide-checkbox-column={cannotAssign}
+          ></lightning-datatable>
+        </template>
+        <template lwc:else>
+          <p
+            class="slds-p-around_small slds-text-body_small slds-text-color_weak"
+          >
+            No user matches the filter.
+          </p>
+        </template>
+      </div>
+
+      <template lwc:if={hasSelection}>
+        <div
+          class="slds-grid slds-grid_vertical-align-center slds-wrap slds-m-top_x-small slds-p-around_x-small slds-theme_shade sfi-action-bar"
+        >
+          <span class="slds-text-title_bold slds-m-right_medium"
+            >{selectionLabel}</span
+          >
+          <lightning-button-group>
+            <lightning-button
+              label="Set User"
+              data-level="User"
+              onclick={handleSetSelected}
+              disabled={isSaving}
+            ></lightning-button>
+            <lightning-button
+              label="Set Admin"
+              data-level="Admin"
+              onclick={handleSetSelected}
+              disabled={isSaving}
+            ></lightning-button>
+            <lightning-button
+              label="Remove access"
+              icon-name="utility:delete"
+              data-level=""
+              onclick={handleSetSelected}
+              disabled={isSaving}
+            ></lightning-button>
+          </lightning-button-group>
+          <lightning-button
+            class="slds-m-left_small"
+            variant="base"
+            label="Clear selection"
+            onclick={handleClearSelection}
+          ></lightning-button>
+        </div>
+      </template>
+    </template>
+    <template lwc:elseif={accessList}>
+      <p class="slds-m-top_medium slds-text-body_small slds-text-color_weak">
+        No user has access yet: use Add users.
+      </p>
+    </template>
+  </article>
+</template>

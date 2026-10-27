@@ -1,0 +1,18 @@
+.sfi-section {
+  max-width: 56rem;
+}
+
+.sfi-table {
+  max-height: 20rem;
+  overflow: auto;
+}
+
+.sfi-inline-spinner {
+  position: relative;
+  width: 2rem;
+  height: 2rem;
+}
+
+.sfi-action-bar {
+  border-radius: 0.25rem;
+}

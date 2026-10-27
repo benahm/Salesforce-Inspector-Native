@@ -1,0 +1,145 @@
+<template>
+  <lightning-modal-header
+    label="Add users to SF Inspector"
+  ></lightning-modal-header>
+  <lightning-modal-body>
+    <template lwc:if={error}>
+      <div
+        class="slds-notify slds-notify_alert slds-alert_error slds-m-bottom_small"
+        role="alert"
+      >
+        {error}
+      </div>
+    </template>
+
+    <h3 class="slds-text-title_bold">1. Access level</h3>
+    <lightning-radio-group
+      class="slds-m-top_x-small"
+      label="Access level"
+      variant="label-hidden"
+      options={levelOptions}
+      value={level}
+      onchange={handleLevel}
+    ></lightning-radio-group>
+
+    <div class="slds-grid slds-grid_vertical-align-end slds-m-top_large">
+      <h3 class="slds-text-title_bold slds-col">2. Users</h3>
+      <lightning-button
+        variant="base"
+        label={pasteToggleLabel}
+        icon-name={pasteToggleIcon}
+        onclick={handleTogglePaste}
+      ></lightning-button>
+    </div>
+
+    <template lwc:if={isPasteMode}>
+      <lightning-textarea
+        label="Usernames or emails"
+        placeholder={pastePlaceholder}
+        value={pasteText}
+        onchange={handlePasteText}
+      ></lightning-textarea>
+      <lightning-button
+        class="slds-show slds-m-top_x-small"
+        label="Find users"
+        onclick={handleFindPasted}
+      ></lightning-button>
+      <template lwc:if={pasteResult}>
+        <div class="slds-m-top_x-small slds-text-body_small">
+          <p>{pasteResult.found}</p>
+          <template lwc:if={pasteResult.notFound}>
+            <p class="slds-text-color_error">{pasteResult.notFound}</p>
+          </template>
+          <template lwc:if={pasteResult.skipped}>
+            <p class="slds-text-color_weak">{pasteResult.skipped}</p>
+          </template>
+        </div>
+      </template>
+    </template>
+    <template lwc:else>
+      <div class="slds-grid slds-gutters_x-small">
+        <div class="slds-col">
+          <lightning-input
+            type="search"
+            label="Search users"
+            placeholder="Name, username, email or alias"
+            value={searchTerm}
+            onchange={handleSearchTerm}
+          ></lightning-input>
+        </div>
+        <div class="slds-col">
+          <lightning-combobox
+            label="Profile"
+            placeholder="All profiles"
+            value={profileId}
+            options={profileOptions}
+            onchange={handleProfile}
+          ></lightning-combobox>
+        </div>
+      </div>
+    </template>
+
+    <div class="slds-m-top_small sfi-results">
+      <template lwc:if={isSearching}>
+        <lightning-spinner
+          alternative-text="Searching"
+          size="small"
+        ></lightning-spinner>
+      </template>
+      <template lwc:if={hasResults}>
+        <lightning-datatable
+          key-field="userId"
+          data={rows}
+          columns={columns}
+          selected-rows={selectedIds}
+          onrowselection={handleRowSelection}
+        ></lightning-datatable>
+      </template>
+      <template lwc:else>
+        <p
+          class="slds-p-around_small slds-text-body_small slds-text-color_weak"
+        >
+          {emptyMessage}
+        </p>
+      </template>
+    </div>
+    <template lwc:if={isResultLimit}>
+      <p class="slds-m-top_xx-small slds-text-body_small slds-text-color_weak">
+        The first 200 users are shown: narrow the search to see more.
+      </p>
+    </template>
+
+    <template lwc:if={hasSelection}>
+      <div class="slds-grid slds-grid_vertical-align-center slds-m-top_medium">
+        <h3 class="slds-text-title_bold slds-col">{selectionTitle}</h3>
+        <lightning-button
+          variant="base"
+          label="Clear"
+          onclick={handleClearSelection}
+        ></lightning-button>
+      </div>
+      <lightning-pill-container
+        class="sfi-pills"
+        items={pills}
+        onitemremove={handleRemovePill}
+      ></lightning-pill-container>
+      <template lwc:if={selectionNote}>
+        <p
+          class="slds-m-top_xx-small slds-text-body_small slds-text-color_weak"
+        >
+          {selectionNote}
+        </p>
+      </template>
+    </template>
+  </lightning-modal-body>
+  <lightning-modal-footer>
+    <lightning-button label="Cancel" onclick={handleCancel}></lightning-button>
+    <lightning-button
+      class="slds-m-left_x-small"
+      variant="brand"
+      label={submitLabel}
+      disabled={cannotSubmit}
+      onclick={handleSubmit}
+    ></lightning-button>
+  </lightning-modal-footer>
+</template>

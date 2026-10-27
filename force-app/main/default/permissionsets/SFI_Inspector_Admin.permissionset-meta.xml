@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>SF Inspector Native Admin</label>
+    <description
+  >Everything SF Inspector Native User grants, plus the SF Inspector Setup tab. Changing the global action also requires Customize Application, and the access requires Assign Permission Sets.</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <classAccesses>
+        <apexClass>SFI_DescribeService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>SFI_UserService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>SFI_EventService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>SFI_LimitsService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>SFI_LogService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>SFI_ImportService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>SFI_QueryService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>SFI_RecordService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>SFI_SearchService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>SFI_AccessService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>SFI_SetupService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <tabSettings>
+        <tab>SFI_Setup</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+</PermissionSet>
