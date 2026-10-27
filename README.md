@@ -5,8 +5,8 @@
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="website/static/img/logo-dark.svg">
-    <img src="website/static/img/logo.svg" alt="SF Inspector Native" width="120">
+    <source media="(prefers-color-scheme: dark)" srcset="website/static/img/logo-beta-dark.svg">
+    <img src="website/static/img/logo-beta.svg" alt="SF Inspector Native" width="120">
   </picture>
 </p>
 

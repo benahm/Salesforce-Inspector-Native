@@ -7,7 +7,7 @@ const repoUrl = 'https://github.com/benahm/Salesforce-Inspector-Native';
 const config: Config = {
   title: 'SF Inspector Native',
   tagline: 'The essentials of Salesforce Inspector, built in Salesforce: a managed package opened from a global action, with no browser extension.',
-  favicon: 'img/logo.svg',
+  favicon: 'img/logo-beta.svg',
 
   future: {
     v4: true,
@@ -62,8 +62,8 @@ const config: Config = {
       title: 'SF Inspector Native',
       logo: {
         alt: 'SF Inspector Native',
-        src: 'img/logo.svg',
-        srcDark: 'img/logo-dark.svg',
+        src: 'img/logo-beta.svg',
+        srcDark: 'img/logo-beta-dark.svg',
       },
       items: [
         {type: 'docSidebar', sidebarId: 'docs', position: 'left', label: 'Docs'},

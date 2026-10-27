@@ -54,7 +54,7 @@ function Hero(): ReactNode {
   return (
     <header className={clsx('hero', styles.hero)}>
       <div className="container">
-        <img className={styles.logo} src={useBaseUrl('img/logo.svg')} alt="" width="96" height="96" />
+        <img className={styles.logo} src={useBaseUrl('img/logo-beta.svg')} alt="" width="96" height="96" />
         <Heading as="h1" className="hero__title">
           {siteConfig.title}
         </Heading>
