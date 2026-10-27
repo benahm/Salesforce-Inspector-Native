@@ -2,7 +2,7 @@
  * Shared helpers for SF Inspector Native components.
  */
 
-import NAMESPACE_MARKER_URL from "@salesforce/resourceUrl/sfiNamespace";
+import NAMESPACE_MARKER_URL from "@salesforce/resourceUrl/namespaceMarker";
 
 export const VERSION = "0.1.0";
 
@@ -16,9 +16,9 @@ export function isSalesforceId(value) {
 }
 
 // Component URLs carry the namespace: "c" when deployed unpackaged, "sfinative"
-// once installed from the package, where the resource URL ends with "sfinative__sfiNamespace".
+// once installed from the package, where the resource URL ends with "sfinative__namespaceMarker".
 const namespace =
-  /\/(\w+?)__sfiNamespace/.exec(NAMESPACE_MARKER_URL)?.[1] || "c";
+  /\/(\w+?)__namespaceMarker/.exec(NAMESPACE_MARKER_URL)?.[1] || "c";
 
 function componentUrl(name, params = {}) {
   const query = Object.entries(params)

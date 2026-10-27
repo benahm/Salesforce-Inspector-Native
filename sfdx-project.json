@@ -5,7 +5,7 @@
       "versionNumber": "0.1.0.NEXT",
       "path": "force-app",
       "default": true,
-      "package": "SFI Native",
+      "package": "SF Inspector Native",
       "versionDescription": ""
     }
   ],
@@ -14,13 +14,13 @@
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "64.0",
   "packageAliases": {
-    "SFI Native": "0Hog70000004etJCAQ",
-    "SFI Native@0.1.0-1": "04tg7000000b7s9AAA",
-    "SFI Native@0.1.0-2": "04tg7000000b89tAAA",
-    "SFI Native@0.1.0-3": "04tg7000000b8LBAAY",
-    "SFI Native@0.1.0-4": "04tg7000000b8bJAAQ",
-    "SFI Native@0.1.0-5": "04tg7000000b94LAAQ",
-    "SFI Native@0.1.0-6": "04tg7000000bBKfAAM",
-    "SFI Native@0.1.0-7": "04tg7000000bBnhAAE"
+    "SF Inspector Native": "0Hog70000004etJCAQ",
+    "SF Inspector Native@0.1.0-1": "04tg7000000b7s9AAA",
+    "SF Inspector Native@0.1.0-2": "04tg7000000b89tAAA",
+    "SF Inspector Native@0.1.0-3": "04tg7000000b8LBAAY",
+    "SF Inspector Native@0.1.0-4": "04tg7000000b8bJAAQ",
+    "SF Inspector Native@0.1.0-5": "04tg7000000b94LAAQ",
+    "SF Inspector Native@0.1.0-6": "04tg7000000bBKfAAM",
+    "SF Inspector Native@0.1.0-7": "04tg7000000bBnhAAE"
   }
 }

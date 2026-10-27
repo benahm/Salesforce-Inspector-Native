@@ -39,10 +39,11 @@ A pre-commit hook runs Prettier, ESLint and the related Jest tests.
 ## Package a version
 
 ```bash
-sf package version create --package "SFI Native" --installation-key-bypass --code-coverage --wait 60
+npm run package:version
 ```
 
-The new version Id (`04t…`) is added to `packageAliases` in `sfdx-project.json`. Test it in a scratch org without the
+It copies the version number of `sfdx-project.json` into the version shown by the app (`VERSION` in
+`lwc/utils/utils.js`), then creates the package version. The new version Id (`04t…`) is added to `packageAliases` in `sfdx-project.json`. Test it in a scratch org without the
 namespace before publishing a release.
 
 ## Documentation

@@ -1,4 +1,19 @@
-import { mergeSelection, parseLogins } from "c/utils";
+import { readFileSync } from "fs";
+import { join } from "path";
+import { VERSION, mergeSelection, parseLogins } from "c/utils";
+
+describe("VERSION", () => {
+  it("matches the version number of sfdx-project.json", () => {
+    // npm run package:version copies it: run it, or update VERSION by hand.
+    const project = JSON.parse(
+      readFileSync(join(process.cwd(), "sfdx-project.json"), "utf8")
+    );
+    const versionNumber = project.packageDirectories.find(
+      (dir) => dir.default
+    ).versionNumber;
+    expect(VERSION).toBe(versionNumber.split(".").slice(0, 3).join("."));
+  });
+});
 
 describe("mergeSelection", () => {
   it("keeps the hidden selected rows and replaces the shown ones", () => {

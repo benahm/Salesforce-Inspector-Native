@@ -3,7 +3,7 @@ import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import getStatus from "@salesforce/apex/SFI_SetupService.getStatus";
 import addGlobalAction from "@salesforce/apex/SFI_SetupService.addGlobalAction";
 import removeGlobalAction from "@salesforce/apex/SFI_SetupService.removeGlobalAction";
-import SFI_ASSETS from "@salesforce/resourceUrl/sfiAssets";
+import ASSETS_URL from "@salesforce/resourceUrl/assets";
 import { RELEASES_URL, VERSION, reduceErrors } from "c/utils";
 
 // The Apex deployment is queued: the layout is read again until it changes,
@@ -17,7 +17,7 @@ export default class Setup extends LightningElement {
   isLoading = false;
   isDeploying = false;
 
-  logoUrl = `${SFI_ASSETS}/images/logo-beta.svg`;
+  logoUrl = `${ASSETS_URL}/images/logo-beta.svg`;
   version = VERSION;
   releasesUrl = RELEASES_URL;
 

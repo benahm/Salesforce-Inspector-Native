@@ -2,9 +2,9 @@
 <QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
     <description>SF Inspector Native launcher</description>
     <height>560</height>
-    <icon>sfiActionIcon</icon>
+    <icon>actionIcon</icon>
     <label>SF Inspector</label>
-    <lightningComponent>sfiLauncherAction</lightningComponent>
+    <lightningComponent>launcherAction</lightningComponent>
     <optionsCreateFeedItem>false</optionsCreateFeedItem>
     <type>LightningComponent</type>
     <width>-100</width>
