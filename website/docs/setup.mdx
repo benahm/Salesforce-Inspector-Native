@@ -1,0 +1,53 @@
+---
+title: Setup tab
+---
+
+The **SF Inspector Setup** tab is visible to users with the **SF Inspector Native Admin** permission set.
+
+## Global action
+
+Shows whether the **SF Inspector** action is on the global publisher layout (`Global-Global Layout`): **Added**,
+**Not added** or **Deploying**.
+
+- **Add** puts the action first in the Lightning global actions. If the layout has no Lightning action list yet, its
+  classic quick actions are copied over first, so nothing disappears from the menu.
+- **Remove** takes it out again.
+
+Both changes are Apex Metadata API deployments: the tab checks their status every 3 seconds, for up to 5 minutes.
+Reload the page after **Add** to see the action.
+
+**Requires** the Customize Application permission.
+
+:::tip[If the deployment fails]
+
+A package that has not passed the security review can only deploy metadata from Apex when **Deploy Metadata from
+Non-Certified Package Versions via Apex** is enabled in Setup > Apex Settings. The Deployment Status page gives the
+error of a failed deployment. The action can also be added by hand in Setup > Publisher Layouts.
+
+:::
+
+## Access
+
+Lists the users who hold one of the package permission sets, Admins first:
+
+| Level | Permission set | Gives |
+| --- | --- | --- |
+| **User** | SF Inspector Native User | The launcher and every tool. |
+| **Admin** | SF Inspector Native Admin | Everything User gives, plus this Setup tab. |
+
+- Filter the list by level (All, Admins, Users) or by name, username or profile.
+- Select users, then **Set User**, **Set Admin** or **Remove access**. The menu of each row has the same actions.
+- Lowering your own access asks for a confirmation first.
+
+**Add users** opens a window:
+
+1. Choose the access level.
+2. Find users by name, username, email or alias, filter by profile, or **paste a list** of usernames or emails (up to
+   200, one per line or separated by commas). The logins not found are listed.
+3. Selected users stay selected from one search to the next. Users who already have the chosen level are left as they
+   are.
+
+Only active standard users are offered. **Requires** the Assign Permission Sets permission: without it, the list is
+read-only.
+
+Only direct assignments are managed: an assignment that comes from a permission set group is left alone.

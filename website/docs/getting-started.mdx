@@ -1,0 +1,45 @@
+---
+title: Getting started
+---
+
+## Install the package
+
+Take the latest version from the [releases](https://github.com/benahm/Salesforce-Inspector-Native/releases). Each
+release gives the package version Id (`04t…`) and its install links:
+
+- Sandbox: `https://test.salesforce.com/packaging/installPackage.apexp?p0=<04t id>`
+- Developer Edition or scratch org: `https://login.salesforce.com/packaging/installPackage.apexp?p0=<04t id>`
+- Salesforce CLI:
+
+  ```bash
+  sf package install --package <04t id> --target-org <alias> --wait 10
+  ```
+
+:::warning[Beta]
+
+A beta version of a managed package can't be installed in production, and can't be upgraded: uninstall the previous
+beta before installing the next one (see [Uninstall](./uninstall.md)).
+
+:::
+
+## Give yourself access
+
+Assign the **SF Inspector Native Admin** permission set to yourself, in Setup or with the CLI:
+
+```bash
+sf org assign permset --name sfinative__SFI_Inspector_Admin --target-org <alias>
+```
+
+## Add the global action
+
+Open the **SF Inspector Setup** tab (App Launcher, then search "SF Inspector") and click **Add** in the Global Action
+section. The action is deployed to the global publisher layout: reload the page when the status shows **Added**.
+
+The **SF Inspector** action now comes first in the global actions menu (`+`) of every Lightning page.
+
+## Give access to other users
+
+In the Access section of the same tab, click **Add users**, choose **User** or **Admin**, then pick users by search,
+by profile, or by pasting a list of usernames or emails. See [Setup tab](./setup.mdx).
+
+Next: [the launcher](./tools/launcher.md).
