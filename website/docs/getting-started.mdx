@@ -4,21 +4,23 @@ title: Getting started
 
 ## Install the package
 
-Take the latest version from the [releases](https://github.com/benahm/Salesforce-Inspector-Native/releases). Each
-release gives the package version Id (`04t…`) and its install links:
+The latest version is **0.1.0**, package version Id `04tg7000000bCmzAAE`:
 
-- Sandbox: `https://test.salesforce.com/packaging/installPackage.apexp?p0=<04t id>`
-- Developer Edition or scratch org: `https://login.salesforce.com/packaging/installPackage.apexp?p0=<04t id>`
+- Production or Developer Edition org:
+  [install](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tg7000000bCmzAAE)
+- Sandbox: [install](https://test.salesforce.com/packaging/installPackage.apexp?p0=04tg7000000bCmzAAE)
 - Salesforce CLI:
 
   ```bash
-  sf package install --package <04t id> --target-org <alias> --wait 10
+  sf package install --package 04tg7000000bCmzAAE --target-org <alias> --wait 10
   ```
 
-:::warning[Beta]
+The [releases](https://github.com/benahm/Salesforce-Inspector-Native/releases) list every version and what changed.
 
-A beta version of a managed package can't be installed in production, and can't be upgraded: uninstall the previous
-beta before installing the next one (see [Uninstall](./uninstall.md)).
+:::warning[Coming from a beta]
+
+A beta version can't be upgraded: uninstall it first (see [Uninstall](./uninstall.md)), then install this version. The
+next versions will upgrade it in place.
 
 :::
 
